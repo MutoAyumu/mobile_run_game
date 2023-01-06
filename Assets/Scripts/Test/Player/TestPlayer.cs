@@ -1,26 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
+[RequireComponent(typeof(InputPlayer))]
+[RequireComponent(typeof(Rigidbody))]
 public class TestPlayer : MonoBehaviour
 {
     InputPlayer _input;
-    Vector2 _dir;
     Rigidbody _rb;
+
+    TestPlayerMove _move;
+
     [SerializeField]float _speed;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _input = GetComponent<InputPlayer>();
+        _move = new TestPlayerMove(_speed, _rb);
+
+        Init();
     }
 
     private void FixedUpdate()
     {
-        if(_input.MoveVector != Vector2.zero)
+        _move.OnMove();
+    }
+
+    void Init()
+    {
+        _input.MoveVector.Subscribe(x =>
         {
-            _dir = _input.MoveVector;
-            _rb.AddForce(new Vector3(_dir.x,-_rb.velocity.y,_dir.y).normalized * _speed, ForceMode.Acceleration);
-        }
+            _move.SetDirection(x);
+        }).AddTo(this);
     }
 }

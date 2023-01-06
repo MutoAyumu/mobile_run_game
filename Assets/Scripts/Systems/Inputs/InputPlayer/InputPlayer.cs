@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
+using UniRx;
 
 public class InputPlayer : MonoBehaviour, InputActionData.IPlayerActions
 {
     private InputActionData _input;
     #region 変数
-    Vector2 _moveVector;
+    ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
     #endregion
 
     #region プロパティ
     #endregion
-    public Vector2 MoveVector => _moveVector;
+    public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
 
     #region UnityEvent
     private void Awake()
@@ -49,12 +49,12 @@ public class InputPlayer : MonoBehaviour, InputActionData.IPlayerActions
     {
         var v = context.ReadValue<Vector2>();
         Debug.Log("Move :" + v);
-        _moveVector = v;
+        _moveVector.Value = v;
     }
     public void OnMoveStop(InputAction.CallbackContext context)
     {
         Debug.Log("Move :" + Vector2.zero);
-        _moveVector = Vector2.zero;
+        _moveVector.Value = Vector2.zero;
     }
     #endregion
 }
