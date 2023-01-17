@@ -14,6 +14,7 @@ public class InputPlayer : MonoBehaviour, InputActionData.IPlayerActions
     #region プロパティ
     #endregion
     public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
+    [SerializeField] TestGyro g;
 
     #region UnityEvent
     private void Awake()
@@ -49,7 +50,7 @@ public class InputPlayer : MonoBehaviour, InputActionData.IPlayerActions
     {
         var v = context.ReadValue<Vector2>();
         Debug.Log("Move :" + v);
-        _moveVector.Value = v;
+        _moveVector.Value = new Vector2(g.Value, 0);
     }
     public void OnMoveStop(InputAction.CallbackContext context)
     {
