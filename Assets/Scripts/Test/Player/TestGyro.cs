@@ -19,7 +19,8 @@ public class TestGyro : MonoBehaviour
         var gravitySensor = GravitySensor.current;
         if (gravitySensor != null)
         {
-            InputSystem.EnableDevice(GravitySensor.current);
+            if(!gravitySensor.enabled)
+                InputSystem.EnableDevice(GravitySensor.current);
             _valueX = gravitySensor.gravity.ReadValue().x;
         }
     }

@@ -23,7 +23,7 @@ public class TestPlayerMove : MonoBehaviour
     {
         if (_dir != Vector2.zero)
         {
-            _rb.AddForce(new Vector3(_dir.x, -_rb.velocity.y, _dir.y).normalized * _currentSpeed, ForceMode.Acceleration);
+            _rb.AddForce(new Vector3(_dir.x, _dir.y , 0).normalized * _currentSpeed, ForceMode.Acceleration);
         }
     }
 }

@@ -23,17 +23,23 @@ public class InputPlayer : MonoBehaviour
 
     private void OnEnable()
     {
+        InputSystem.EnableDevice(GravitySensor.current);
+
         _input.actions["Move"].started += OnMove;
         _input.actions["Move"].performed += OnMove;
         _input.actions["Move"].canceled += OnMoveStop;
+        _input.actions["Gyro"].started += OnMove;
         _input.actions["Gyro"].performed += OnMove;
     }
 
     private void OnDisable()
     {
+        InputSystem.DisableDevice(GravitySensor.current);
+
         _input.actions["Move"].started -= OnMove;
         _input.actions["Move"].performed -= OnMove;
         _input.actions["Move"].canceled -= OnMoveStop;
+        _input.actions["Gyro"].started -= OnMove;
         _input.actions["Gyro"].performed -= OnMove;
     }
     #endregion
@@ -42,12 +48,12 @@ public class InputPlayer : MonoBehaviour
     void OnMove(InputAction.CallbackContext context)
     {
         var v = context.ReadValue<Vector2>();
-        Debug.Log("Move :" + v);
-        _moveVector.Value = new Vector3(v.x, 0, v.y);
+        Debug.Log("OnMove :" + v);
+        _moveVector.Value = v;
     }
     void OnMoveStop(InputAction.CallbackContext context)
     {
-        Debug.Log("Move :" + Vector2.zero);
+        Debug.Log("OnMoveStop :" + Vector2.zero);
         _moveVector.Value = Vector2.zero;
     }
     #endregion
