@@ -2,19 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestPlayerMove
+public class TestPlayerMove : MonoBehaviour
 {
     float _currentSpeed;
     float _runSpeed;
     Vector2 _dir;
     Rigidbody _rb;
 
-    public TestPlayerMove(float speed, Rigidbody rb)
+    public void Init(TestPlayer player)
     {
-        _runSpeed = speed;
-        _currentSpeed = _runSpeed;
-        _rb = rb;
+        _rb = player.Rb;
+        _currentSpeed = player.Speed;
     }
+
     public void SetDirection(Vector2 vec)
     {
         _dir = vec;

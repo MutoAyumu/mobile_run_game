@@ -7,11 +7,6 @@ public class TestGyro : MonoBehaviour
 {
     float? _valueX;
     GUIStyle _style = new GUIStyle();
-    GravitySensor _gravitySensor;
-
-    public GravitySensor GravitySensor => _gravitySensor;
-
-    public float Value => _valueX.Value;
 
     private void Start()
     {
@@ -21,11 +16,11 @@ public class TestGyro : MonoBehaviour
 
     private void Update()
     {
-        _gravitySensor = GravitySensor.current;
-        if (_gravitySensor != null)
+        var gravitySensor = GravitySensor.current;
+        if (gravitySensor != null)
         {
             InputSystem.EnableDevice(GravitySensor.current);
-            _valueX = _gravitySensor.gravity.ReadValue().x;
+            _valueX = gravitySensor.gravity.ReadValue().x;
         }
     }
     void OnGUI()

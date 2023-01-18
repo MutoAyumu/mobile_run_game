@@ -9,18 +9,20 @@ public class TestPlayer : MonoBehaviour
 {
     InputPlayer _input;
     Rigidbody _rb;
-
     TestPlayerMove _move;
-
     [SerializeField]float _speed;
+
+    public float Speed => _speed;
+    public Rigidbody Rb => _rb;
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
-        _input = GetComponent<InputPlayer>();
-        _move = new TestPlayerMove(_speed, _rb);
+        TryGetComponent(out _rb);
+        TryGetComponent(out _input);
+        TryGetComponent(out _move);
 
         Init();
+        _move.Init(this);
     }
 
     private void FixedUpdate()
