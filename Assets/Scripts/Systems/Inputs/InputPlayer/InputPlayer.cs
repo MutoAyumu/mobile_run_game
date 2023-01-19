@@ -8,7 +8,8 @@ public class InputPlayer : MonoBehaviour
 {
     #region 変数
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
-    private PlayerInput _input;
+    PlayerInput _input;
+    GravitySensor _gravitySensor;
     #endregion
 
     #region プロパティ
@@ -23,13 +24,9 @@ public class InputPlayer : MonoBehaviour
 
     private void OnEnable()
     {
-        InputSystem.EnableDevice(GravitySensor.current);
-
         _input.actions["Move"].started += OnMove;
         _input.actions["Move"].performed += OnMove;
         _input.actions["Move"].canceled += OnMoveStop;
-        _input.actions["Gyro"].started += OnMove;
-        _input.actions["Gyro"].performed += OnMove;
     }
 
     private void OnDisable()
@@ -39,8 +36,26 @@ public class InputPlayer : MonoBehaviour
         _input.actions["Move"].started -= OnMove;
         _input.actions["Move"].performed -= OnMove;
         _input.actions["Move"].canceled -= OnMoveStop;
-        _input.actions["Gyro"].started -= OnMove;
-        _input.actions["Gyro"].performed -= OnMove;
+    }
+    private void Update()
+    {
+        if (_gravitySensor == null)
+        {
+            _gravitySensor = GravitySensor.current;
+        }
+        else
+        {
+            if (!_gravitySensor.enabled)
+            {
+                InputSystem.EnableDevice(GravitySensor.current);
+                Debug.Log($"EnableDevice GravitySensor");
+            }
+            else
+            {
+                var v = _gravitySensor.gravity.ReadValue();
+                _moveVector.Value = new Vector2(v.x, 0);
+            }
+        }
     }
     #endregion
 

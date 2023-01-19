@@ -34,7 +34,7 @@
                 },
                 {
                     "name": "Gyro",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "07060c5b-aee8-434c-b2e5-64a9154fef68",
                     "expectedControlType": "Vector3",
                     "processors": "",
