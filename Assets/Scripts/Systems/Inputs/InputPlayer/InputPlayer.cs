@@ -11,6 +11,7 @@ public class InputPlayer : MonoBehaviour
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
     PlayerInput _input;
     GravitySensor _gravitySensor;
+    [SerializeField] float _test = 0.3f;
     #endregion
 
     #region プロパティ
@@ -26,10 +27,6 @@ public class InputPlayer : MonoBehaviour
     private void OnEnable()
     {
         StartCoroutine(EnableSensorAsync());
-
-        _input.actions["Move"].started += OnMove;
-        _input.actions["Move"].performed += OnMove;
-        _input.actions["Move"].canceled += OnMoveStop;
     }
 
     private void OnDisable()
@@ -39,18 +36,33 @@ public class InputPlayer : MonoBehaviour
             InputSystem.DisableDevice(GravitySensor.current);
             Debug.Log($"DisableDevice GravitySensor");
         }
-
-        _input.actions["Move"].started -= OnMove;
-        _input.actions["Move"].performed -= OnMove;
-        _input.actions["Move"].canceled -= OnMoveStop;
     }
     private void Update()
     {
-        //if (_gravitySensor != null)
-        //{
-        //    var v = _gravitySensor.gravity.ReadValue();
-        //    _moveVector.Value = new Vector2(v.x, 0);
-        //}
+        if (_gravitySensor != null)
+        {
+            var gravityX = _gravitySensor.gravity.ReadValue().x;
+            var anyInputX = _input.actions["Move"].ReadValue<Vector2>().x;
+
+            if (Math.Abs(gravityX) < _test)
+            {
+                gravityX = 0;
+            }
+
+            var x = gravityX;
+
+            if(Mathf.Abs(anyInputX) > MathF.Abs(gravityX))
+            {
+                x = anyInputX;
+            }
+
+            OnMove(x);
+        }
+        else
+        {
+            var x = _input.actions["Move"].ReadValue<Vector2>().x;
+            OnMove(x);
+        }
     }
     #endregion
 
@@ -82,16 +94,9 @@ public class InputPlayer : MonoBehaviour
     }
 
     #region InputSystemEvent
-    void OnMove(InputAction.CallbackContext context)
+    void OnMove(float x)
     {
-        var v = context.ReadValue<Vector2>();
-        Debug.Log("OnMove :" + v);
-        _moveVector.Value = v;
-    }
-    void OnMoveStop(InputAction.CallbackContext context)
-    {
-        Debug.Log("OnMoveStop :" + Vector2.zero);
-        _moveVector.Value = Vector2.zero;
+        _moveVector.Value = new Vector2(x, 0);
     }
     #endregion
 }
