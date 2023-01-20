@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
+using System;
 
 public class InputPlayer : MonoBehaviour
 {
@@ -24,6 +25,8 @@ public class InputPlayer : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(EnableSensorAsync());
+
         _input.actions["Move"].started += OnMove;
         _input.actions["Move"].performed += OnMove;
         _input.actions["Move"].canceled += OnMoveStop;
@@ -31,7 +34,11 @@ public class InputPlayer : MonoBehaviour
 
     private void OnDisable()
     {
-        InputSystem.DisableDevice(GravitySensor.current);
+        if (_gravitySensor != null && _gravitySensor.enabled)
+        {
+            InputSystem.DisableDevice(GravitySensor.current);
+            Debug.Log($"DisableDevice GravitySensor");
+        }
 
         _input.actions["Move"].started -= OnMove;
         _input.actions["Move"].performed -= OnMove;
@@ -39,25 +46,40 @@ public class InputPlayer : MonoBehaviour
     }
     private void Update()
     {
-        if (_gravitySensor == null)
+        //if (_gravitySensor != null)
+        //{
+        //    var v = _gravitySensor.gravity.ReadValue();
+        //    _moveVector.Value = new Vector2(v.x, 0);
+        //}
+    }
+    #endregion
+
+    IEnumerator EnableSensorAsync()
+    {
+        Debug.Log($"Start EnableSensorAsync");
+        
+        while (true)
         {
-            _gravitySensor = GravitySensor.current;
-        }
-        else
-        {
-            if (!_gravitySensor.enabled)
+            yield return null;
+
+            if (_gravitySensor == null)
             {
-                InputSystem.EnableDevice(GravitySensor.current);
-                Debug.Log($"EnableDevice GravitySensor");
+                _gravitySensor = GravitySensor.current;
             }
             else
             {
-                var v = _gravitySensor.gravity.ReadValue();
-                _moveVector.Value = new Vector2(v.x, 0);
+                if (!_gravitySensor.enabled)
+                {
+                    InputSystem.EnableDevice(GravitySensor.current);
+                    Debug.Log($"EnableDevice GravitySensor");
+                }
+
+                break;
             }
         }
+
+        Debug.Log($"Complete EnableSensorAsync");
     }
-    #endregion
 
     #region InputSystemEvent
     void OnMove(InputAction.CallbackContext context)
