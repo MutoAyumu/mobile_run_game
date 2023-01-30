@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
+using System;
 
 public class InputPlayer : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class InputPlayer : MonoBehaviour
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
     PlayerInput _input;
     GravitySensor _gravitySensor;
+    [SerializeField] float _test = 0.3f;
     #endregion
 
     #region プロパティ
@@ -24,52 +26,77 @@ public class InputPlayer : MonoBehaviour
 
     private void OnEnable()
     {
-        _input.actions["Move"].started += OnMove;
-        _input.actions["Move"].performed += OnMove;
-        _input.actions["Move"].canceled += OnMoveStop;
+        StartCoroutine(EnableSensorAsync());
     }
 
     private void OnDisable()
     {
-        InputSystem.DisableDevice(GravitySensor.current);
-
-        _input.actions["Move"].started -= OnMove;
-        _input.actions["Move"].performed -= OnMove;
-        _input.actions["Move"].canceled -= OnMoveStop;
+        if (_gravitySensor != null && _gravitySensor.enabled)
+        {
+            InputSystem.DisableDevice(GravitySensor.current);
+            Debug.Log($"DisableDevice GravitySensor");
+        }
     }
     private void Update()
     {
-        if (_gravitySensor == null)
+        if (_gravitySensor != null)
         {
-            _gravitySensor = GravitySensor.current;
+            var gravityX = _gravitySensor.gravity.ReadValue().x;
+            var anyInputX = _input.actions["Move"].ReadValue<Vector2>().x;
+
+            if (Math.Abs(gravityX) < _test)
+            {
+                gravityX = 0;
+            }
+
+            var x = gravityX;
+
+            if(Mathf.Abs(anyInputX) > MathF.Abs(gravityX))
+            {
+                x = anyInputX;
+            }
+
+            OnMove(x);
         }
         else
         {
-            if (!_gravitySensor.enabled)
-            {
-                InputSystem.EnableDevice(GravitySensor.current);
-                Debug.Log($"EnableDevice GravitySensor");
-            }
-            else
-            {
-                var v = _gravitySensor.gravity.ReadValue();
-                _moveVector.Value = new Vector2(v.x, 0);
-            }
+            var x = _input.actions["Move"].ReadValue<Vector2>().x;
+            OnMove(x);
         }
     }
     #endregion
 
-    #region InputSystemEvent
-    void OnMove(InputAction.CallbackContext context)
+    IEnumerator EnableSensorAsync()
     {
-        var v = context.ReadValue<Vector2>();
-        Debug.Log("OnMove :" + v);
-        _moveVector.Value = v;
+        Debug.Log($"Start EnableSensorAsync");
+        
+        while (true)
+        {
+            yield return null;
+
+            if (_gravitySensor == null)
+            {
+                _gravitySensor = GravitySensor.current;
+            }
+            else
+            {
+                if (!_gravitySensor.enabled)
+                {
+                    InputSystem.EnableDevice(GravitySensor.current);
+                    Debug.Log($"EnableDevice GravitySensor");
+                }
+
+                break;
+            }
+        }
+
+        Debug.Log($"Complete EnableSensorAsync");
     }
-    void OnMoveStop(InputAction.CallbackContext context)
+
+    #region InputSystemEvent
+    void OnMove(float x)
     {
-        Debug.Log("OnMoveStop :" + Vector2.zero);
-        _moveVector.Value = Vector2.zero;
+        _moveVector.Value = new Vector2(x, 0);
     }
     #endregion
 }
