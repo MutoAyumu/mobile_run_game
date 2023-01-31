@@ -11,6 +11,6 @@ public class GameManagerAttachment : MonoBehaviour
     }
     private void Start()
     {
-        GameManager.Instance.OnPauseSubject.Subscribe(_ => Debug.Log("Pause")).AddTo(this);
+        GameManager.Instance.OnPauseSubject.Subscribe(_ => Debug.Log("Pause")).AddTo(this); 
     }
 }

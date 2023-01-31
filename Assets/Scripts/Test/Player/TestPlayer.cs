@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
-[RequireComponent(typeof(InputPlayer))]
+[RequireComponent(typeof(TestInputPlayer))]
 [RequireComponent(typeof(Rigidbody))]
 public class TestPlayer : MonoBehaviour
 {
-    InputPlayer _input;
+    TestInputPlayer _input;
     Rigidbody _rb;
     TestPlayerMove _move;
     [SerializeField]float _speed;

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
-using System;
 
 public class InputPlayer : MonoBehaviour
 {
     #region 変数
-    ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
-    PlayerInput _input;
+    GameInputs _inputs;
     GravitySensor _gravitySensor;
-    [SerializeField] float _test = 0.3f;
+    ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
+
+    [SerializeField] float _deadZone = 0.3f;
+    [SerializeField, Range(0f, 1f)] float _clampRotateValue = 0.6f;
     #endregion
 
     #region プロパティ
@@ -19,49 +20,59 @@ public class InputPlayer : MonoBehaviour
     #endregion
 
     #region UnityEvent
-    private void Awake()
-    {
-        TryGetComponent(out _input);
-    }
 
-    private void OnEnable()
+    public void Init(PlayerController player)
+    {
+        player.OnUpdateSub.Subscribe(_ => OnUpdate()).AddTo(this);
+        player.OnEnableSub.Subscribe(_ => Enable()).AddTo(this);
+        player.OnDisableSub.Subscribe(_ => Disable()).AddTo(this);
+        _inputs = new GameInputs();
+    }
+    void Enable()
     {
         StartCoroutine(EnableSensorAsync());
+        _inputs.Enable();
     }
 
-    private void OnDisable()
+    void Disable()
     {
         if (_gravitySensor != null && _gravitySensor.enabled)
         {
             InputSystem.DisableDevice(GravitySensor.current);
             Debug.Log($"DisableDevice GravitySensor");
         }
+        _inputs.Disable();
     }
-    private void Update()
+    void OnUpdate()
     {
         if (_gravitySensor != null)
         {
-            var gravityX = _gravitySensor.gravity.ReadValue().x;
-            var anyInputX = _input.actions["Move"].ReadValue<Vector2>().x;
+            var gravity = _gravitySensor.gravity.ReadValue();
+            var anyInput = _inputs.Player.Move.ReadValue<Vector2>();
 
-            if (Math.Abs(gravityX) < _test)
+            if (Mathf.Abs(gravity.x) < _deadZone)
             {
-                gravityX = 0;
+                gravity = Vector2.zero;
             }
 
-            var x = gravityX;
-
-            if(Mathf.Abs(anyInputX) > MathF.Abs(gravityX))
+            if (Mathf.Abs(gravity.x) >= _clampRotateValue)
             {
-                x = anyInputX;
+                gravity = Vector2.one;
             }
 
-            OnMove(x);
+            var vec = gravity;
+
+            if (Mathf.Abs(anyInput.x) > Mathf.Abs(gravity.x))
+            {
+                vec = anyInput;
+            }
+
+            InputMove(vec);
         }
         else
         {
-            var x = _input.actions["Move"].ReadValue<Vector2>().x;
-            OnMove(x);
+            var vec = _inputs.Player.Move.ReadValue<Vector2>();
+            InputMove(vec);
         }
     }
     #endregion
@@ -69,7 +80,7 @@ public class InputPlayer : MonoBehaviour
     IEnumerator EnableSensorAsync()
     {
         Debug.Log($"Start EnableSensorAsync");
-        
+
         while (true)
         {
             yield return null;
@@ -93,10 +104,10 @@ public class InputPlayer : MonoBehaviour
         Debug.Log($"Complete EnableSensorAsync");
     }
 
-    #region InputSystemEvent
-    void OnMove(float x)
+    #region Event
+    void InputMove(Vector2 vec)
     {
-        _moveVector.Value = new Vector2(x, 0);
+        _moveVector.Value = vec;
     }
     #endregion
 }
