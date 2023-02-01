@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
+using System;
 
 public class InputPlayer : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class InputPlayer : MonoBehaviour
     GameInputs _inputs;
     GravitySensor _gravitySensor;
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
+    Subject<Unit> _jumpSub = new Subject<Unit>();
 
     [SerializeField] float _deadZone = 0.3f;
     [SerializeField, Range(0f, 1f)] float _clampRotateValue = 0.6f;
@@ -17,6 +19,7 @@ public class InputPlayer : MonoBehaviour
 
     #region プロパティ
     public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
+    public IObservable<Unit> JumpSub => _jumpSub;
     #endregion
 
     #region UnityEvent
@@ -31,6 +34,9 @@ public class InputPlayer : MonoBehaviour
     void Enable()
     {
         StartCoroutine(EnableSensorAsync());
+
+        _inputs.Player.Jump.performed += OnJump;
+
         _inputs.Enable();
     }
 
@@ -41,6 +47,9 @@ public class InputPlayer : MonoBehaviour
             InputSystem.DisableDevice(GravitySensor.current);
             Debug.Log($"DisableDevice GravitySensor");
         }
+
+        _inputs.Player.Jump.performed -= OnJump;
+
         _inputs.Disable();
     }
     void OnUpdate()
@@ -108,6 +117,10 @@ public class InputPlayer : MonoBehaviour
     void InputMove(Vector2 vec)
     {
         _moveVector.Value = vec;
+    }
+    void OnJump(InputAction.CallbackContext context)
+    {
+        _jumpSub.OnNext(Unit.Default);
     }
     #endregion
 }
