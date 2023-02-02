@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "4f475a6f-b7ac-4fac-a8ae-9adfc0e60fdc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Gyro",
                     "type": "PassThrough",
                     "id": "07060c5b-aee8-434c-b2e5-64a9154fef68",
@@ -60,9 +69,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump",
+                    "name": "Action",
                     "type": "Button",
-                    "id": "4f475a6f-b7ac-4fac-a8ae-9adfc0e60fdc",
+                    "id": "d4b2de25-6d3b-4efc-98ec-056a0f587998",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -315,7 +324,7 @@
                 {
                     "name": "",
                     "id": "b2c75490-45ae-491b-a25e-a60588d601c6",
-                    "path": "<Touchscreen>/touch0",
+                    "path": "<Touchscreen>/primaryTouch",
                     "interactions": "",
                     "processors": "",
                     "groups": "Touch",
@@ -342,6 +351,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "522884b4-0f12-4ca3-8889-f11c32fc45d2",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

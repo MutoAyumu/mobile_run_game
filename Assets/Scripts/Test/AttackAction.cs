@@ -5,14 +5,16 @@ using UniRx;
 using UniRx.Triggers;
 
 [RequireComponent(typeof(ObservablePointerEnterTrigger))]
-public class TestAttackAction : MonoBehaviour
+public class AttackAction : MonoBehaviour
 {
     ObservablePointerEnterTrigger _enterTrigger;
 
     private void Awake()
     {
         TryGetComponent(out _enterTrigger);
-        _enterTrigger.OnPointerEnterAsObservable()
-            .Subscribe(_ => Debug.Log("EnterTrigger"));
+    }
+    public void Init(System.Action action)
+    {
+        _enterTrigger.OnPointerEnterAsObservable().Subscribe(_ => action());
     }
 }
