@@ -75,7 +75,7 @@ namespace UnityEngine.InputSystem
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Touch"",
                     ""type"": ""Value"",
                     ""id"": ""2af260d5-180e-4ceb-acd4-1bf7117f4404"",
                     ""expectedControlType"": ""Touch"",
@@ -339,11 +339,11 @@ namespace UnityEngine.InputSystem
                 {
                     ""name"": """",
                     ""id"": ""b2c75490-45ae-491b-a25e-a60588d601c6"",
-                    ""path"": ""<Touchscreen>/delta"",
+                    ""path"": ""<Touchscreen>/touch0"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""New action"",
+                    ""groups"": ""Touch"",
+                    ""action"": ""Touch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -958,7 +958,7 @@ namespace UnityEngine.InputSystem
             m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
             m_Player_Gyro = m_Player.FindAction("Gyro", throwIfNotFound: true);
             m_Player_PauseResume = m_Player.FindAction("PauseResume", throwIfNotFound: true);
-            m_Player_Newaction = m_Player.FindAction("New action", throwIfNotFound: true);
+            m_Player_Touch = m_Player.FindAction("Touch", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
@@ -1036,7 +1036,7 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Fire;
         private readonly InputAction m_Player_Gyro;
         private readonly InputAction m_Player_PauseResume;
-        private readonly InputAction m_Player_Newaction;
+        private readonly InputAction m_Player_Touch;
         private readonly InputAction m_Player_Jump;
         public struct PlayerActions
         {
@@ -1047,7 +1047,7 @@ namespace UnityEngine.InputSystem
             public InputAction @Fire => m_Wrapper.m_Player_Fire;
             public InputAction @Gyro => m_Wrapper.m_Player_Gyro;
             public InputAction @PauseResume => m_Wrapper.m_Player_PauseResume;
-            public InputAction @Newaction => m_Wrapper.m_Player_Newaction;
+            public InputAction @Touch => m_Wrapper.m_Player_Touch;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
@@ -1073,9 +1073,9 @@ namespace UnityEngine.InputSystem
                     @PauseResume.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseResume;
                     @PauseResume.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseResume;
                     @PauseResume.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPauseResume;
-                    @Newaction.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNewaction;
-                    @Newaction.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNewaction;
-                    @Newaction.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnNewaction;
+                    @Touch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
+                    @Touch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
+                    @Touch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                     @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                     @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                     @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
@@ -1098,9 +1098,9 @@ namespace UnityEngine.InputSystem
                     @PauseResume.started += instance.OnPauseResume;
                     @PauseResume.performed += instance.OnPauseResume;
                     @PauseResume.canceled += instance.OnPauseResume;
-                    @Newaction.started += instance.OnNewaction;
-                    @Newaction.performed += instance.OnNewaction;
-                    @Newaction.canceled += instance.OnNewaction;
+                    @Touch.started += instance.OnTouch;
+                    @Touch.performed += instance.OnTouch;
+                    @Touch.canceled += instance.OnTouch;
                     @Jump.started += instance.OnJump;
                     @Jump.performed += instance.OnJump;
                     @Jump.canceled += instance.OnJump;
@@ -1265,7 +1265,7 @@ namespace UnityEngine.InputSystem
             void OnFire(InputAction.CallbackContext context);
             void OnGyro(InputAction.CallbackContext context);
             void OnPauseResume(InputAction.CallbackContext context);
-            void OnNewaction(InputAction.CallbackContext context);
+            void OnTouch(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
         }
         public interface IUIActions

@@ -1,24 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UniRx;
 using System;
+using UnityEngine.InputSystem.LowLevel;
 
 public class InputPlayer : MonoBehaviour
 {
     #region 変数
     GameInputs _inputs;
-    GravitySensor _gravitySensor;
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
+    ReactiveProperty<TouchState> _touchState = new ReactiveProperty<TouchState>();
     Subject<Unit> _jumpSub = new Subject<Unit>();
-
-    [SerializeField] float _deadZone = 0.3f;
-    [SerializeField, Range(0f, 1f)] float _clampRotateValue = 0.6f;
     #endregion
 
     #region プロパティ
     public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
+    public IReadOnlyReactiveProperty<TouchState> TouchState => _touchState;
     public IObservable<Unit> JumpSub => _jumpSub;
     #endregion
 
@@ -33,94 +30,38 @@ public class InputPlayer : MonoBehaviour
     }
     void Enable()
     {
-        StartCoroutine(EnableSensorAsync());
-
-        _inputs.Player.Jump.performed += OnJump;
+        _inputs.Player.Jump.performed += OnInputJump;
+        _inputs.Player.Move.performed += OnInputMove;
+        _inputs.Player.Move.canceled += OnInputMove;
+        _inputs.Player.Touch.performed += OnInputTouch;
 
         _inputs.Enable();
     }
 
     void Disable()
     {
-        if (_gravitySensor != null && _gravitySensor.enabled)
-        {
-            InputSystem.DisableDevice(GravitySensor.current);
-            Debug.Log($"DisableDevice GravitySensor");
-        }
-
-        _inputs.Player.Jump.performed -= OnJump;
+        _inputs.Player.Jump.performed -= OnInputJump;
+        _inputs.Player.Move.performed -= OnInputMove;
+        _inputs.Player.Move.canceled -= OnInputMove;
+        _inputs.Player.Touch.performed -= OnInputTouch;
 
         _inputs.Disable();
     }
-    void OnUpdate()
-    {
-        if (_gravitySensor != null)
-        {
-            var gravity = _gravitySensor.gravity.ReadValue();
-            var anyInput = _inputs.Player.Move.ReadValue<Vector2>();
-
-            if (Mathf.Abs(gravity.x) < _deadZone)
-            {
-                gravity = Vector2.zero;
-            }
-
-            if (Mathf.Abs(gravity.x) >= _clampRotateValue)
-            {
-                gravity = Vector2.one;
-            }
-
-            var vec = gravity;
-
-            if (Mathf.Abs(anyInput.x) > Mathf.Abs(gravity.x))
-            {
-                vec = anyInput;
-            }
-
-            InputMove(vec);
-        }
-        else
-        {
-            var vec = _inputs.Player.Move.ReadValue<Vector2>();
-            InputMove(vec);
-        }
-    }
+    void OnUpdate() { }
     #endregion
 
-    IEnumerator EnableSensorAsync()
+    #region InputEvent
+    void OnInputMove(InputAction.CallbackContext context)
     {
-        Debug.Log($"Start EnableSensorAsync");
-
-        while (true)
-        {
-            yield return null;
-
-            if (_gravitySensor == null)
-            {
-                _gravitySensor = GravitySensor.current;
-            }
-            else
-            {
-                if (!_gravitySensor.enabled)
-                {
-                    InputSystem.EnableDevice(GravitySensor.current);
-                    Debug.Log($"EnableDevice GravitySensor");
-                }
-
-                break;
-            }
-        }
-
-        Debug.Log($"Complete EnableSensorAsync");
+        _moveVector.Value = context.ReadValue<Vector2>();
     }
-
-    #region Event
-    void InputMove(Vector2 vec)
-    {
-        _moveVector.Value = vec;
-    }
-    void OnJump(InputAction.CallbackContext context)
+    void OnInputJump(InputAction.CallbackContext context)
     {
         _jumpSub.OnNext(Unit.Default);
+    }
+    private void OnInputTouch(InputAction.CallbackContext context)
+    {
+        _touchState.Value = context.ReadValue<TouchState>();
     }
     #endregion
 }

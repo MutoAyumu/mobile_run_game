@@ -51,7 +51,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "New action",
+                    "name": "Touch",
                     "type": "Value",
                     "id": "2af260d5-180e-4ceb-acd4-1bf7117f4404",
                     "expectedControlType": "Touch",
@@ -315,11 +315,11 @@
                 {
                     "name": "",
                     "id": "b2c75490-45ae-491b-a25e-a60588d601c6",
-                    "path": "<Touchscreen>/delta",
+                    "path": "<Touchscreen>/touch0",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "New action",
+                    "groups": "Touch",
+                    "action": "Touch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
