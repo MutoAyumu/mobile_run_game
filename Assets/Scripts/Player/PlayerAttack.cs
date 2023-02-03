@@ -12,8 +12,13 @@ public class PlayerAttack : MonoBehaviour
 
     Camera _cam;
     int _tapCount;
+    int _actionObjectCount;
+    float _attackPower;
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
+    ReactiveProperty<bool> _isActed = new ReactiveProperty<bool>();
+
+    public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
 
     const string ACTION_PARENT_TAG = "ActionParent";
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
@@ -48,11 +53,13 @@ public class PlayerAttack : MonoBehaviour
     }
     void SubscribeAction(AttackAction action)
     {
-        action.Init(() => Debug.Log("Attack"));
+        action.Init(x => OnCount(x));
     }
     void OnAction()
     {
         _tapCount -= 10;
+        _isActed.Value = true;
+
         var list = new List<Transform>(_actionOrizinPositions);
 
         for(int i = 0; i < _actionOrizinPositions.Length; i++)
@@ -62,6 +69,19 @@ public class PlayerAttack : MonoBehaviour
             obj.name = $"Action[{r}]";
             SubscribeAction(obj);
             list.RemoveAt(r);
+        }
+    }
+    void OnCount(float power)
+    {
+        _actionObjectCount++;
+        _attackPower += power;
+        Debug.Log($"AttackPower = {_attackPower}");
+
+        if (_actionObjectCount >= _actionOrizinPositions.Length)
+        {
+            _isActed.Value = false;
+            _actionObjectCount = 0;
+            _attackPower = 0;
         }
     }
 }

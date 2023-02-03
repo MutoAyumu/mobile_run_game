@@ -9,6 +9,7 @@ using DG.Tweening;
 public class AttackAction : MonoBehaviour
 {
     [SerializeField] float _animSpeed = 1f;
+    [SerializeField] float _addActionPower = 1f;
     [SerializeField] Ease _ease = Ease.Linear;
 
     ObservablePointerEnterTrigger _enterTrigger;
@@ -21,11 +22,11 @@ public class AttackAction : MonoBehaviour
 
         Animation(Vector2.one, null);
     }
-    public void Init(System.Action action)
+    public void Init(System.Action<float> action)
     {
         _enterTrigger.OnPointerEnterAsObservable().Subscribe(_ =>
         {
-            action?.Invoke();
+            action?.Invoke(_addActionPower);
             Animation(Vector2.zero, () => Destroy(gameObject));
         });
     }
