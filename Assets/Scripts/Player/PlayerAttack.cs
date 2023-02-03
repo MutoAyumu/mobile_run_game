@@ -59,6 +59,7 @@ public class PlayerAttack : MonoBehaviour
     {
         _tapCount -= 10;
         _isActed.Value = true;
+        CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
 
         var list = new List<Transform>(_actionOrizinPositions);
 
@@ -82,6 +83,7 @@ public class PlayerAttack : MonoBehaviour
             _isActed.Value = false;
             _actionObjectCount = 0;
             _attackPower = 0;
+            CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
         }
     }
 }
