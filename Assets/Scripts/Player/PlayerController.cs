@@ -23,9 +23,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// ƒvƒŒƒCƒ„[ŠÖŒW‚ÌUpdeteˆ—‚ğ‚Ü‚Æ‚ß‚½Observable
     /// </summary>
-    public IObservable<Unit> OnUpdateSub => _updateSub;
-    public IObservable<Unit> OnEnableSub => _enableSub;
-    public IObservable<Unit> OnDisableSub => _disableSub;
+    public IObservable<Unit> OnUpdateSub => _updateSub.TakeUntilDestroy(this);
+    public IObservable<Unit> OnEnableSub => _enableSub.TakeUntilDestroy(this);
+    public IObservable<Unit> OnDisableSub => _disableSub.TakeUntilDestroy(this);
     public InputPlayer Input => _input;
     #endregion
 

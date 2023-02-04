@@ -7,12 +7,20 @@ using UnityEngine.InputSystem;
 
 public class GameManager
 {
+    EnemyController _enemy;
     GameInputs _inputs = new GameInputs();
+
     public static GameManager Instance => new GameManager();
+    public EnemyController Enemy => _enemy;
+
+    const string ENEMY_TAG = "Enemy";
+
     public GameManager() 
     {
         _inputs.Player.PauseResume.performed += OnPause;
         _inputs.Enable();
+
+        _enemy = GameObject.FindGameObjectWithTag(ENEMY_TAG).GetComponent<EnemyController>();
     }
 
     readonly Subject<Unit> _pauseSubject = new Subject<Unit>();
@@ -20,12 +28,7 @@ public class GameManager
 
     public void Init(GameManagerAttachment attachment)
     {
-
-    }
-    void Dispose()
-    {
-        _inputs.Player.PauseResume.performed -= OnPause;
-        _inputs.Disable();
+        
     }
     void Update()
     {
