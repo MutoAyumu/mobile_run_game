@@ -67,6 +67,7 @@ public class PlayerAttack : MonoBehaviour
         _tapCount -= 10;
         _isActed.Value = true;
         CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
+        CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
 
         var list = new List<Transform>(_actionOrizinPositions);
 
@@ -90,6 +91,7 @@ public class PlayerAttack : MonoBehaviour
             _actionObjectCount = 0;
             _attackPower = 0;
             CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
+            CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
             _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)_attackType);
         }
     }
