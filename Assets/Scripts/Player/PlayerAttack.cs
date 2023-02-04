@@ -4,11 +4,13 @@ using UniRx;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using UniRx.Triggers;
 
 public class PlayerAttack : MonoBehaviour
 {
     [SerializeField] Image _touchEffect;
     [SerializeField] AttackAction _action;
+    [SerializeField] AttackType _attackType = AttackType.First;
 
     Camera _cam;
     int _tapCount;
@@ -16,12 +18,15 @@ public class PlayerAttack : MonoBehaviour
     float _attackPower;
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
+    Animator _anim;
     ReactiveProperty<bool> _isActed = new ReactiveProperty<bool>();
 
     public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
 
     const string ACTION_PARENT_TAG = "ActionParent";
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
+    const string ATTACK_ANIMATION_TAG = "Attack";
+    const string ATTACK_INTEGER_PARAM = "AttackNumber";
 
     public void Init(PlayerController player)
     {
@@ -30,6 +35,8 @@ public class PlayerAttack : MonoBehaviour
         _touchEffect.enabled = false;
 
         _cam = Camera.main;
+        TryGetComponent(out _anim);
+        SetAnimationTrigger();
         _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
         var objects = GameObject.FindGameObjectsWithTag(ACTION_OBJECT_POSITION);
         _actionOrizinPositions = Array.ConvertAll(objects, go => go.transform);
@@ -76,7 +83,6 @@ public class PlayerAttack : MonoBehaviour
     {
         _actionObjectCount++;
         _attackPower += power;
-        Debug.Log($"AttackPower = {_attackPower}");
 
         if (_actionObjectCount >= _actionOrizinPositions.Length)
         {
@@ -84,6 +90,30 @@ public class PlayerAttack : MonoBehaviour
             _actionObjectCount = 0;
             _attackPower = 0;
             CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
+            _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)_attackType);
         }
     }
+    void SetAnimationTrigger()
+    {
+        var trigger = _anim.GetBehaviour<ObservableStateMachineTrigger>();
+
+        trigger
+            .OnStateExitAsObservable()
+            .Subscribe(stateInfo =>
+            {
+                var info = stateInfo.StateInfo;
+
+                if (info.IsTag(ATTACK_ANIMATION_TAG))
+                {
+                    _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)AttackType.None);
+                }
+            }).AddTo(this);
+    }
+}
+public enum AttackType
+{
+    None = 0,
+    First = 1,
+    Second = 2,
+    Third = 3
 }

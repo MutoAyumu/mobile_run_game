@@ -8,6 +8,7 @@ using System;
 [RequireComponent(typeof(PlayerMove))]
 [RequireComponent(typeof(PlayerAttack))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
     readonly Subject<Unit> _updateSub = new Subject<Unit>();
@@ -17,7 +18,6 @@ public class PlayerController : MonoBehaviour
     InputPlayer _input;
     PlayerMove _move;
     PlayerAttack _attack;
-    Rigidbody _rb;
 
     #region Property
     /// <summary>
@@ -26,8 +26,6 @@ public class PlayerController : MonoBehaviour
     public IObservable<Unit> OnUpdateSub => _updateSub;
     public IObservable<Unit> OnEnableSub => _enableSub;
     public IObservable<Unit> OnDisableSub => _disableSub;
-
-    public Rigidbody Rigidbody => _rb;
     public InputPlayer Input => _input;
     #endregion
 
@@ -36,7 +34,6 @@ public class PlayerController : MonoBehaviour
         TryGetComponent(out _input);
         TryGetComponent(out _move);
         TryGetComponent(out _attack);
-        TryGetComponent(out _rb);
 
         Init();
     }
