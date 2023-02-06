@@ -11,6 +11,7 @@ using System;
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
+    #region 変数
     readonly Subject<Unit> _updateSub = new Subject<Unit>();
     readonly Subject<Unit> _enableSub = new Subject<Unit>();
     readonly Subject<Unit> _disableSub = new Subject<Unit>();
@@ -18,8 +19,9 @@ public class PlayerController : MonoBehaviour
     InputPlayer _input;
     PlayerMove _move;
     PlayerAttack _attack;
+    #endregion
 
-    #region Property
+    #region プロパティ
     /// <summary>
     /// プレイヤー関係のUpdete処理をまとめたObservable
     /// </summary>
