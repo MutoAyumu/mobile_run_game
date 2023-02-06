@@ -87,12 +87,20 @@ public class PlayerAttack : MonoBehaviour
 
         if (_actionObjectCount >= _actionOrizinPositions.Length)
         {
+            OnAttack(_attackPower);
             _isActed.Value = false;
             _actionObjectCount = 0;
             _attackPower = 0;
             CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
             CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
             _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)_attackType);
+        }
+    }
+    void OnAttack(float power)
+    {
+        foreach(var t in GameManager.Instance.Targets)
+        {
+            t.TakeDamage(power);
         }
     }
     void SetAnimationTrigger()

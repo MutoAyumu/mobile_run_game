@@ -11,10 +11,19 @@ public class EnemyHealth : MonoBehaviour , IDamage
 
     public void Init(EnemyController enemy)
     {
-
+        
+    }
+    private void OnEnable()
+    {
+        GameManager.Instance.Targets.Add(this);
+    }
+    private void OnDisable()
+    {
+        GameManager.Instance.Targets.Remove(this);
     }
     public void TakeDamage(float damage)
     {
         _health.Value -= damage;
+        Debug.Log($"TakeDamage {damage}");
     }
 }

@@ -17,8 +17,10 @@ public class GameManager
         _inputs.Enable();
     }
 
+    List<IDamage> _targets = new List<IDamage>();
     readonly Subject<Unit> _pauseSubject = new Subject<Unit>();
     public IObservable<Unit> OnPauseSubject => _pauseSubject;
+    public List<IDamage> Targets => _targets;
 
     public void Init(GameManagerAttachment attachment)
     {
