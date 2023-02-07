@@ -6,8 +6,12 @@ using System;
 
 public class GameManagerAttachment : MonoBehaviour
 {
+    [SerializeField] float _gameTime = 60f;
+
     public delegate void MonoEvent();
     MonoEvent _updateEvent;
+
+    public float GameTime => _gameTime;
 
     private void Awake()
     {

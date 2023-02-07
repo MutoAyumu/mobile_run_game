@@ -27,10 +27,11 @@ public class GameManager
     public void Init(GameManagerAttachment attachment)
     {
         attachment.Init(Update);
+        _gameTime.Value = attachment.GameTime;
     }
     void Update()
     {
-        Debug.Log("Update");
+        _gameTime.Value -= Time.deltaTime;
     }
     void OnPause(InputAction.CallbackContext context)
     {
