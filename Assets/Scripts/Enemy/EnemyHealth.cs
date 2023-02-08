@@ -16,6 +16,7 @@ public class EnemyHealth : MonoBehaviour , IDamage
     private void OnEnable()
     {
         GameManager.Instance.Targets.Add(this);
+        Debug.Log(GameManager.Instance.Targets.Count);
     }
     private void OnDisable()
     {
