@@ -1,33 +1,34 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using System;
 using UnityEngine.InputSystem;
+using System;
 
-public class GameManager
+public class FieldManager
 {
-    #region 変数
+    #region　変数
     ReactiveProperty<float> _gameTime = new ReactiveProperty<float>();
     List<IDamage> _targets = new List<IDamage>();
     bool _isPause;
+
     readonly GameInputs _inputs = new GameInputs();
     readonly Subject<Unit> _pauseSubject = new Subject<Unit>();
     #endregion
-
-    #region プロパティ
-    public static GameManager Instance => new GameManager();
-    public IObservable<Unit> OnPauseSubject => _pauseSubject;
+    #region　プロパティ
     public IReadOnlyReactiveProperty<float> GameTime => _gameTime;
     public List<IDamage> Targets => _targets;
+    public IObservable<Unit> OnPauseSub => _pauseSubject;
     #endregion
 
-    public GameManager()
+    public static FieldManager Instance = new FieldManager();
+    private FieldManager()
     {
         _inputs.Player.PauseResume.started += OnPause;
         _inputs.Enable();
     }
 
-    public void Init(GameManagerAttachment attachment)
+    public void Init(FieldManagerAttachment attachment)
     {
         _gameTime.Value = attachment.GameTime;
 
@@ -42,9 +43,9 @@ public class GameManager
     {
         if (_isPause) return;
 
-        Debug.Log("Update");
         _gameTime.Value -= Time.deltaTime;
     }
+
     void OnPause(InputAction.CallbackContext context)
     {
         _isPause = !_isPause;

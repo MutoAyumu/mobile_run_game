@@ -11,7 +11,7 @@ public class SystemPresenter : MonoBehaviour
     {
         if(_gameTimeText)
         {
-            GameManager.Instance.GameTime.Subscribe(x =>
+            FieldManager.Instance.GameTime.Subscribe(x =>
             {
                 _gameTimeText.SetText(x.ToString());
             }).AddTo(this);

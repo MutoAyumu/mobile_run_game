@@ -15,12 +15,12 @@ public class EnemyHealth : MonoBehaviour , IDamage
     }
     private void OnEnable()
     {
-        GameManager.Instance.Targets.Add(this);
-        Debug.Log(GameManager.Instance.Targets.Count);
+        FieldManager.Instance.Targets.Add(this);
+        Debug.Log(FieldManager.Instance.Targets.Count);
     }
     private void OnDisable()
     {
-        GameManager.Instance.Targets.Remove(this);
+        FieldManager.Instance.Targets.Remove(this);
     }
     public void TakeDamage(float damage)
     {

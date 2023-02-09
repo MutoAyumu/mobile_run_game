@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx;
 using System;
 
-public class GameManagerAttachment : MonoBehaviour
+public class FieldManagerAttachment : MonoBehaviour
 {
     [SerializeField] float _gameTime = 60f;
 
@@ -12,6 +12,6 @@ public class GameManagerAttachment : MonoBehaviour
 
     private void Awake()
     {
-        GameManager.Instance.Init(this);
+        FieldManager.Instance.Init(this);
     }
 }
