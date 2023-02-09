@@ -28,7 +28,7 @@ public class AttackAction : MonoBehaviour
         {
             action?.Invoke(_addActionPower);
             Animation(Vector2.zero, () => Destroy(gameObject));
-        });
+        }).AddTo(this);
     }
     void Animation(Vector2 size, System.Action action)
     {

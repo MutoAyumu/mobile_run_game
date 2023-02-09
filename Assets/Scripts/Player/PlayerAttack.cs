@@ -98,9 +98,11 @@ public class PlayerAttack : MonoBehaviour
     }
     void OnAttack(float power)
     {
-        foreach(var t in FieldManager.Instance.Targets)
+        var targets = FieldManager.Instance.Targets;
+
+        for(int i = 0; i < targets.Count; i++)
         {
-            t.TakeDamage(power);
+            targets[i].TakeDamage(power);
         }
     }
     void SetAnimationTrigger()
