@@ -11,6 +11,7 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] float _interval = 2f;
     [SerializeField] Transform[] _setPositions;
     ArrangementObjectGenerator _generator;
+    [SerializeField] LayerMask _layer;
 
     Timer _attackTimer = new Timer();
     #endregion
@@ -37,5 +38,12 @@ public class EnemyAttack : MonoBehaviour
         var r = Random.Range(0, _setPositions.Length);
         var obj = _generator.OnCreate();
         obj.position = _setPositions[r].position;
+        obj.SetParent(CheckParent());
+    }
+    Transform CheckParent()
+    {
+        RaycastHit hit;
+        Physics.Raycast(this.transform.position, Vector3.down, out hit, 3, _layer);
+        return hit.transform;
     }
 }

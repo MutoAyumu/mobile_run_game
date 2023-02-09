@@ -43,6 +43,7 @@ public class Obstacle : ArrangementObject, IDamage
         player.TakeDamage(_power);
         Destroy();
     }
+
     public override void Create()
     {
         base.Create();

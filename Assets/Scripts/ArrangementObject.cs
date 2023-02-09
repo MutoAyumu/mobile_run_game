@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class ArrangementObject : MonoBehaviour, IObjectPool
 {
     const string PLAYER_TAG = "Player";
+    const string DESTROY_TAG = "Finish";
     bool _isActive;
 
     public bool IsActive => _isActive;
@@ -16,9 +17,12 @@ public abstract class ArrangementObject : MonoBehaviour, IObjectPool
     public virtual void DisactiveForInstantiate() => _isActive = false;
 
     protected abstract void OnHit(GameObject go);
-    private void OnCollisionEnter(Collision collision)
+
+    private void OnTriggerEnter(Collider other)
     {
-        if(collision.gameObject.CompareTag(PLAYER_TAG))
-            OnHit(collision.gameObject);
+        if (other.gameObject.CompareTag(PLAYER_TAG))
+            OnHit(other.gameObject);
+        if (other.gameObject.CompareTag(DESTROY_TAG))
+            Destroy();
     }
 }
