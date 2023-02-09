@@ -4,6 +4,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using DG.Tweening;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(ObservablePointerEnterTrigger))]
 public class AttackAction : MonoBehaviour
@@ -14,11 +15,13 @@ public class AttackAction : MonoBehaviour
 
     ObservablePointerEnterTrigger _enterTrigger;
     Transform _thisTransform;
+    Image _image;
 
     private void Awake()
     {
         TryGetComponent(out _enterTrigger);
         TryGetComponent(out _thisTransform);
+        TryGetComponent(out _image);
 
         Animation(Vector2.one, null);
     }
@@ -26,6 +29,7 @@ public class AttackAction : MonoBehaviour
     {
         _enterTrigger.OnPointerEnterAsObservable().Subscribe(_ =>
         {
+            _image.raycastTarget = false;
             action?.Invoke(_addActionPower);
             Animation(Vector2.zero, () => Destroy(gameObject));
         }).AddTo(this);

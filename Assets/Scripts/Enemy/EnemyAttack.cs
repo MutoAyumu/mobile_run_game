@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using UniRx.Triggers;
 
 [RequireComponent(typeof(ArrangementObjectGenerator))]
 public class EnemyAttack : MonoBehaviour
@@ -14,8 +15,13 @@ public class EnemyAttack : MonoBehaviour
     [SerializeField] LayerMask _layer;
 
     Timer _attackTimer = new Timer();
+    Animator _anim;
+    EnemyController _enemy;
     #endregion
-    
+
+    const string ATTACK_PARAM = "IsAttack";
+    const string ATTACK_ANIMATION_TAG = "Attack";
+
     #region プロパティ
     #endregion
 
@@ -24,13 +30,18 @@ public class EnemyAttack : MonoBehaviour
         enemy.OnUpdateSub.Subscribe(_ => OnUpdate()).AddTo(this);
 
         _attackTimer.Setup(_interval);
+        _enemy = enemy;
         TryGetComponent(out _generator);
+        TryGetComponent(out _anim);
+        SetAnimationTrigger();
     }
     void OnUpdate()
     {
+        if (_enemy.CurrentState == LifeState.Dead) return;
+
         if(_attackTimer.RunTimer())
         {
-            OnAttack();
+            _anim.SetTrigger(ATTACK_PARAM);
         }
     }
     void OnAttack()
@@ -39,6 +50,22 @@ public class EnemyAttack : MonoBehaviour
         var obj = _generator.OnCreate();
         obj.position = _setPositions[r].position;
         obj.SetParent(CheckParent());
+    }
+    void SetAnimationTrigger()
+    {
+        var trigger = _anim.GetBehaviour<ObservableStateMachineTrigger>();
+
+        trigger
+            .OnStateExitAsObservable()
+            .Subscribe(stateInfo =>
+            {
+                var info = stateInfo.StateInfo;
+
+                if (info.IsTag(ATTACK_ANIMATION_TAG))
+                {
+                    OnAttack();
+                }
+            }).AddTo(this);
     }
     Transform CheckParent()
     {

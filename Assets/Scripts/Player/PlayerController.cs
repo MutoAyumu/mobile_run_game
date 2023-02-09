@@ -7,6 +7,7 @@ using System;
 [RequireComponent(typeof(InputPlayer))]
 [RequireComponent(typeof(PlayerMove))]
 [RequireComponent(typeof(PlayerAttack))]
+[RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
@@ -19,6 +20,7 @@ public class PlayerController : MonoBehaviour
     InputPlayer _input;
     PlayerMove _move;
     PlayerAttack _attack;
+    PlayerHealth _health;
     #endregion
 
     #region プロパティ
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour
         TryGetComponent(out _input);
         TryGetComponent(out _move);
         TryGetComponent(out _attack);
+        TryGetComponent(out _health);
 
         Init();
     }
@@ -44,6 +47,7 @@ public class PlayerController : MonoBehaviour
         _input.Init(this);
         _move.Init(this);
         _attack.Init(this);
+        _health.Init(this);
     }
     private void OnEnable()
     {

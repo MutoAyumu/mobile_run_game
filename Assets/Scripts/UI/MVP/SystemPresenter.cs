@@ -13,7 +13,7 @@ public class SystemPresenter : MonoBehaviour
         {
             FieldManager.Instance.GameTime.Subscribe(x =>
             {
-                _gameTimeText.SetText(x.ToString());
+                _gameTimeText.SetText($"GameTime : {x:00}");
             }).AddTo(this);
         }
     }

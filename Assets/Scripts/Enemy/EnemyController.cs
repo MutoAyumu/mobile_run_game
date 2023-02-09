@@ -6,6 +6,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(EnemyHealth))]
 [RequireComponent(typeof(EnemyAttack))]
+[RequireComponent(typeof(Animator))]
 public class EnemyController : MonoBehaviour
 {
     #region 変数
@@ -15,12 +16,15 @@ public class EnemyController : MonoBehaviour
 
     EnemyHealth _health;
     EnemyAttack _attack;
+    LifeState _state;
     #endregion
 
     #region プロパティ
     public IObservable<Unit> OnUpdateSub => _updateSub.TakeUntilDestroy(this);
     public IObservable<Unit> OnEnableSub => _enableSub.TakeUntilDestroy(this);
     public IObservable<Unit> OnDisableSub => _disableSub.TakeUntilDestroy(this);
+
+    public LifeState CurrentState { get => _state; set => _state = value; }
     #endregion
 
     private void Awake()
@@ -47,4 +51,9 @@ public class EnemyController : MonoBehaviour
     {
         _updateSub.OnNext(Unit.Default);
     }
+}
+public enum LifeState
+{
+    Normal,
+    Dead
 }
