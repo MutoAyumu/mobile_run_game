@@ -7468,7 +7468,6 @@ GameObject:
   - component: {fileID: 8855052669007655847}
   - component: {fileID: 9036980633708873474}
   - component: {fileID: 9036980633708873473}
-  - component: {fileID: 9036980633708873472}
   - component: {fileID: 9036980633708873475}
   - component: {fileID: 9036980633708873476}
   - component: {fileID: 9036980633708873469}
@@ -7679,24 +7678,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &9036980633708873472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8189980434590017821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb78a201129a12846a878af19f15d250, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _moveSpeed: 4
-  _jumpPower: 7
-  _groundCheckRadius: 0.25
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &9036980633708873473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7721,6 +7702,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d39af343d5790424d958c33188d28d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _jumpPower: 7
+  _groundCheckRadius: 0.2
+  _moveSpeed: 4
 --- !u!114 &9036980633708873475
 MonoBehaviour:
   m_ObjectHideFlags: 0

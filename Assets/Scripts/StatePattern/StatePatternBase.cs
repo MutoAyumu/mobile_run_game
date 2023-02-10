@@ -8,6 +8,7 @@ public class StatePatternBase<TOwner>
         public StatePatternBase<TOwner> StatePattern;
         protected TOwner Owner => StatePattern.Owner;
 
+        public virtual void Init(TOwner owner) { }
         public virtual void OnEnter() { }
         public virtual void OnUpdate() { }
         public virtual void OnExit() { }
@@ -35,6 +36,7 @@ public class StatePatternBase<TOwner>
         {
             StatePattern = this
         };
+        newState.Init(Owner);
         _states.Add(stateId, newState);
     }
 

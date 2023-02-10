@@ -5,29 +5,26 @@ using UniRx;
 using System;
 
 [RequireComponent(typeof(InputPlayer))]
-[RequireComponent(typeof(PlayerMove))]
 [RequireComponent(typeof(PlayerAttack))]
 [RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public partial class PlayerController : MonoBehaviour
 {
     #region 変数
-    readonly Subject<Unit> _updateSub = new Subject<Unit>();
     readonly Subject<Unit> _enableSub = new Subject<Unit>();
     readonly Subject<Unit> _disableSub = new Subject<Unit>();
 
     InputPlayer _input;
-    PlayerMove _move;
     PlayerAttack _attack;
     PlayerHealth _health;
+    StatePatternBase<PlayerController> _statePattern;
+    Rigidbody _rb;
+    Animator _anim;
+    Transform _thisTransform;
     #endregion
 
     #region プロパティ
-    /// <summary>
-    /// プレイヤー関係のUpdete処理をまとめたObservable
-    /// </summary>
-    public IObservable<Unit> OnUpdateSub => _updateSub.TakeUntilDestroy(this);
     public IObservable<Unit> OnEnableSub => _enableSub.TakeUntilDestroy(this);
     public IObservable<Unit> OnDisableSub => _disableSub.TakeUntilDestroy(this);
     public InputPlayer Input => _input;
@@ -36,18 +33,28 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         TryGetComponent(out _input);
-        TryGetComponent(out _move);
         TryGetComponent(out _attack);
         TryGetComponent(out _health);
+        TryGetComponent(out _rb);
+        TryGetComponent(out _anim);
 
         Init();
     }
     void Init()
     {
+        _statePattern = new StatePatternBase<PlayerController>(this);
+        _statePattern.Add<PlayerMove>((int)StateType.Move);
+        _statePattern.Add<PlayerJump>((int)StateType.Jump);
+
+        _thisTransform = this.transform;
+
         _input.Init(this);
-        _move.Init(this);
         _attack.Init(this);
         _health.Init(this);
+    }
+    private void Start()
+    {
+        _statePattern.OnStart((int)StateType.Move);
     }
     private void OnEnable()
     {
@@ -59,6 +66,14 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        _updateSub.OnNext(Unit.Default);
+        _statePattern.OnUpdate();
+    }
+    enum StateType
+    {
+        Dead = -1,
+        Move = 0,
+        Run = 1,
+        Attack = 2,
+        Jump = 3,
     }
 }

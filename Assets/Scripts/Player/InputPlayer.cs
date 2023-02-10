@@ -25,7 +25,6 @@ public class InputPlayer : MonoBehaviour
 
     public void Init(PlayerController player)
     {
-        player.OnUpdateSub.Subscribe(_ => OnUpdate()).AddTo(this);
         player.OnEnableSub.Subscribe(_ => Enable()).AddTo(this);
         player.OnDisableSub.Subscribe(_ => Disable()).AddTo(this);
         _inputs = new GameInputs();
@@ -51,7 +50,6 @@ public class InputPlayer : MonoBehaviour
 
         _inputs.Disable();
     }
-    void OnUpdate() { }
     #endregion
 
     #region InputEvent
