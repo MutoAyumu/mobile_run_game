@@ -4,52 +4,81 @@ using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 
-[RequireComponent(typeof(EnemyHealth))]
-[RequireComponent(typeof(EnemyAttack))]
 [RequireComponent(typeof(Animator))]
-public class EnemyController : MonoBehaviour
+public partial class EnemyController : MonoBehaviour, IDamage
 {
     #region 変数
-    readonly Subject<Unit> _updateSub = new Subject<Unit>();
-    readonly Subject<Unit> _enableSub = new Subject<Unit>();
-    readonly Subject<Unit> _disableSub = new Subject<Unit>();
+    [Header("Health")]
+    [SerializeField] FloatReactiveProperty _health = new FloatReactiveProperty(10);
 
-    EnemyHealth _health;
-    EnemyAttack _attack;
-    LifeState _state;
+    Animator _anim;
+    Transform _thisTransform;
+    StatePatternBase<EnemyController> _statePattern;    
+
+    const string TAKEDAMAGE_PARAM = "IsTakeDamage";
+    const string DEATH_PARAM = "IsDead";
     #endregion
 
     #region プロパティ
-    public IObservable<Unit> OnUpdateSub => _updateSub.TakeUntilDestroy(this);
-    public IObservable<Unit> OnEnableSub => _enableSub.TakeUntilDestroy(this);
-    public IObservable<Unit> OnDisableSub => _disableSub.TakeUntilDestroy(this);
-
-    public LifeState CurrentState { get => _state; set => _state = value; }
+    public IReadOnlyReactiveProperty<float> Health => _health;
     #endregion
 
     private void Awake()
     {
-        TryGetComponent(out _health);
-        TryGetComponent(out _attack);
-
         Init();
     }
+    private void Start()
+    {
+        _statePattern.OnStart((int)StateType.Idle);
+    }
+
     void Init()
     {
-        _health.Init(this);
-        _attack.Init(this);
+        _thisTransform = this.transform;
+        TryGetComponent(out _generator);
+        TryGetComponent(out _anim);
+
+        _statePattern = new StatePatternBase<EnemyController>(this);
+        _statePattern.Add<EnemyDeadState>((int)StateType.Dead);
+        _statePattern.Add<EnemyIdleState>((int)StateType.Idle);
+        _statePattern.Add<EnemyAttackState>((int)StateType.Attack);
     }
+
     private void OnEnable()
     {
-        _enableSub.OnNext(Unit.Default);
+        FieldManager.Instance.Targets.Add(this);
     }
+
     private void OnDisable()
     {
-        _disableSub.OnNext(Unit.Default);
+        FieldManager.Instance.Targets.Remove(this);
     }
+
     private void Update()
     {
-        _updateSub.OnNext(Unit.Default);
+        _statePattern.OnUpdate();
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (_statePattern.CheckCurrentStateID((int)StateType.Dead) is null or true) return;
+
+        _health.Value -= damage;
+
+        if (_health.Value <= 0)
+        {
+            _statePattern.ChangeState((int)StateType.Dead);
+            _anim.SetTrigger(DEATH_PARAM);
+            return;
+        }
+
+        _anim.SetTrigger(TAKEDAMAGE_PARAM);
+    }
+    enum StateType
+    {
+        Dead = -1,
+        Idle = 0,
+        Attack = 1,
     }
 }
 public enum LifeState

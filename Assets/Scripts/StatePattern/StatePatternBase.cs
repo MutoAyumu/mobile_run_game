@@ -8,7 +8,7 @@ public class StatePatternBase<TOwner>
         public StatePatternBase<TOwner> StatePattern;
         protected TOwner Owner => StatePattern.Owner;
 
-        public virtual void Init(TOwner owner) { }
+        public virtual void Init() { }
         public virtual void OnEnter() { }
         public virtual void OnUpdate() { }
         public virtual void OnExit() { }
@@ -36,7 +36,7 @@ public class StatePatternBase<TOwner>
         {
             StatePattern = this
         };
-        newState.Init(Owner);
+        newState.Init();
         _states.Add(stateId, newState);
     }
 
@@ -55,6 +55,22 @@ public class StatePatternBase<TOwner>
     public void OnUpdate()
     {
         _currentState.OnUpdate();
+    }
+
+    public bool? CheckCurrentStateID(int stateId)
+    {
+        if(!_states.TryGetValue(stateId, out var state))
+        {
+            Debug.LogError("指定IDがありません : " + stateId);
+            return null;
+        }
+        else if(state != _currentState)
+        {
+            Debug.LogError("指定IDと現在のStateIDが違います : " + stateId);
+            return false;
+        }
+
+        return true;
     }
 
     public void ChangeState(int stateId)

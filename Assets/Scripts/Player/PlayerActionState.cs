@@ -31,9 +31,9 @@ public partial class PlayerController
         const string ATTACK_ANIMATION_TAG = "Attack";
         const string ATTACK_INTEGER_PARAM = "AttackNumber";
 
-        public override void Init(PlayerController owner)
+        public override void Init()
         {
-            owner._input.TouchState.Subscribe(x => IsInProgress(x)).AddTo(Owner);
+            Owner._input.TouchState.Subscribe(x => IsInProgress(x)).AddTo(Owner);
             //_touchEffect.enabled = false;
 
             _cam = Camera.main;

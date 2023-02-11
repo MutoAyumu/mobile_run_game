@@ -17,13 +17,13 @@ public partial class PlayerController
         const string JUMP_PARAM = "IsJump";
         const string GROUND_LAYER_NAME = "Ground";
 
-        public override void Init(PlayerController owner)
+        public override void Init()
         {
-            _currentSpeed = owner._moveSpeed;
+            _currentSpeed = Owner._moveSpeed;
             _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
-            owner._input.MoveVector.Subscribe(SetDirection).AddTo(Owner);
-            owner._input.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
-            owner._input.ActionSub.Subscribe(_ => StatePattern.ChangeState((int)StateType.Action)).AddTo(Owner);
+            Owner._input.MoveVector.Subscribe(SetDirection).AddTo(Owner);
+            Owner._input.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
+            Owner._input.ActionSub.Subscribe(_ => StatePattern.ChangeState((int)StateType.Action)).AddTo(Owner);
         }
 
         public override void OnUpdate()
@@ -44,7 +44,7 @@ public partial class PlayerController
         }
         void OnJump()
         {
-            if (!_isGroundChecked) return;
+            if (!_isGroundChecked || Owner._statePattern.CheckCurrentStateID((int)StateType.Action) is null or true) return;
 
             StatePattern.ChangeState((int)StateType.Jump);
         }
