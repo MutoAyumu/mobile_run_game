@@ -7,7 +7,7 @@ public partial class PlayerController
     [Header("Move")]
     [SerializeField] float _moveSpeed = 1;
 
-    public class PlayerMove : StateBase
+    public class PlayerMoveState : StateBase
     {
         bool _isGroundChecked;
         LayerMask _groundLayer;
@@ -21,8 +21,9 @@ public partial class PlayerController
         {
             _currentSpeed = owner._moveSpeed;
             _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
-            owner.Input.MoveVector.Subscribe(SetDirection).AddTo(owner);
-            owner.Input.JumpSub.Subscribe(_ => OnJump()).AddTo(owner);
+            owner._input.MoveVector.Subscribe(SetDirection).AddTo(Owner);
+            owner._input.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
+            owner._input.ActionSub.Subscribe(_ => StatePattern.ChangeState((int)StateType.Action)).AddTo(Owner);
         }
 
         public override void OnUpdate()

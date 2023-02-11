@@ -11,7 +11,7 @@ public partial class PlayerController
     [Header("IsGroundCheck")]
     [SerializeField] float _groundCheckRadius = 1f;
 
-    public class PlayerJump : StateBase
+    public class PlayerJumpState : StateBase
     {
 
         public override void OnEnter()

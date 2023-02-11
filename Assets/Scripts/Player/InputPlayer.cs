@@ -4,7 +4,7 @@ using UniRx;
 using System;
 using UnityEngine.InputSystem.LowLevel;
 
-public class InputPlayer : MonoBehaviour
+public class InputPlayer
 {
     #region ïœêî
     GameInputs _inputs;
@@ -21,16 +21,9 @@ public class InputPlayer : MonoBehaviour
     public IObservable<Unit> ActionSub => _actionSub;
     #endregion
 
-    #region UnityEvent
-
-    public void Init(PlayerController player)
+    public InputPlayer()
     {
-        player.OnEnableSub.Subscribe(_ => Enable()).AddTo(this);
-        player.OnDisableSub.Subscribe(_ => Disable()).AddTo(this);
         _inputs = new GameInputs();
-    }
-    void Enable()
-    {
         _inputs.Player.Jump.performed += OnInputJump;
         _inputs.Player.Move.performed += OnInputMove;
         _inputs.Player.Move.canceled += OnInputMove;
@@ -39,18 +32,6 @@ public class InputPlayer : MonoBehaviour
 
         _inputs.Enable();
     }
-
-    void Disable()
-    {
-        _inputs.Player.Jump.performed -= OnInputJump;
-        _inputs.Player.Move.performed -= OnInputMove;
-        _inputs.Player.Move.canceled -= OnInputMove;
-        _inputs.Player.Touch.performed -= OnInputTouch;
-        _inputs.Player.Action.performed -= OnInputAction;
-
-        _inputs.Disable();
-    }
-    #endregion
 
     #region InputEvent
     void OnInputMove(InputAction.CallbackContext context)

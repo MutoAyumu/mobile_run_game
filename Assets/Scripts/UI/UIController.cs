@@ -14,9 +14,6 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         var player = GameObject.FindGameObjectWithTag(PLAYER_TAG);
-        var action = player.GetComponent<PlayerAttack>();
-
-        action.IsActed.Subscribe(x => TogglePanels(x)).AddTo(this);
     }
     void TogglePanels(bool isActed)
     {
