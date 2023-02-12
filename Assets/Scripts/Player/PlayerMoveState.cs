@@ -1,77 +1,107 @@
 using UnityEngine;
 using UniRx;
-using StateBase = StatePatternBase<PlayerController>.StateBase;
 
-public partial class PlayerController
+[System.Serializable]
+public class PlayerMoveState : StateBase<>
 {
     [Header("Move")]
     [SerializeField] float _moveSpeed = 1;
+    [Header("IsGroundCheck")]
+    [SerializeField] float _groundCheckRadius = 1f;
 
-    public class PlayerMoveState : StateBase
+    bool _isGroundChecked;
+    LayerMask _groundLayer;
+    float _currentSpeed;
+    Rigidbody _rb;
+    Animator _anim;
+    InputType _inputType;
+    Transform _thisTransform;
+
+    const string JUMP_PARAM = "IsJump";
+    const string GROUND_LAYER_NAME = "Ground";
+
+    public int Type => (int)PlayerController.StateType.Move;
+
+    public void Init()
     {
-        bool _isGroundChecked;
-        LayerMask _groundLayer;
-        float _currentSpeed;
-        Vector2 _dir;
-
-        const string JUMP_PARAM = "IsJump";
-        const string GROUND_LAYER_NAME = "Ground";
-
-        public override void Init()
-        {
-            _currentSpeed = Owner._moveSpeed;
-            _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
-            Owner._input.MoveVector.Subscribe(SetDirection).AddTo(Owner);
-            Owner._input.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
-            Owner._input.ActionSub.Subscribe(_ => StatePattern.ChangeState((int)StateType.Action)).AddTo(Owner);
-        }
-
-        public override void OnUpdate()
-        {
-            OnMove();
-        }
-        void OnMove()
-        {
-            if (_dir != Vector2.zero)
-            {
-                var vel = new Vector3(_dir.x, 0, 0).normalized * _currentSpeed;
-                vel.y = Owner._rb.velocity.y;
-                Owner._rb.velocity = vel;
-            }
-
-            _isGroundChecked = IsGroundCheck();
-            Owner._anim.SetBool(JUMP_PARAM, !_isGroundChecked);
-        }
-        void OnJump()
-        {
-            if (!_isGroundChecked || Owner._statePattern.CheckCurrentStateID((int)StateType.Action) is null or true) return;
-
-            StatePattern.ChangeState((int)StateType.Jump);
-        }
-
-        bool IsGroundCheck()
-        {
-            var check = false;
-            var hit = Physics.OverlapSphere(Owner._thisTransform.position, Owner._groundCheckRadius, _groundLayer);
-
-            if (hit.Length > 0)
-            {
-                check = true;
-            }
-
-            return check;
-        }
-
-        void SetDirection(Vector2 vec)
-        {
-            _dir = new Vector2(vec.x, vec.y);
-        }
+        _currentSpeed = _moveSpeed;
+        TryGetComponent(out _rb);
+        TryGetComponent(out _anim);
+        TryGetComponent(out _thisTransform);
+        _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
+        InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
+        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(Owner);
     }
-    private void OnDrawGizmosSelected()
+    public void OnEnter()
     {
-        var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
+        
+    }
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(pos, _groundCheckRadius);
+    public void OnExit()
+    {
+        
+    }
+    public int OnUpdate()
+    {
+        var id = OnMove();
+
+        if(_inputType == InputType.Jump)
+        {
+            id = (int)PlayerController.StateType.Jump;
+        }
+        else if(_inputType == InputType.Action)
+        {
+            id = (int)PlayerController.StateType.Action;
+        }
+
+        return id;
+    }
+    int OnMove()
+    {
+        var dir = InputSystemManager.Instance.MoveVector;
+
+        if (dir != Vector2.zero)
+        {
+            var vel = new Vector3(dir.x, 0, 0).normalized * _currentSpeed;
+            vel.y = _rb.velocity.y;
+            _rb.velocity = vel;
+        }
+
+        _isGroundChecked = IsGroundCheck();
+        _anim.SetBool(JUMP_PARAM, !_isGroundChecked);
+
+        return (int)PlayerController.StateType.Move;
+    }
+
+    void OnAction()
+    {
+        _inputType = InputType.Action;
+    }
+
+    void OnJump()
+    {
+        if (!_isGroundChecked)// || Owner._statePattern.CheckCurrentStateID((int)PlayerController.StateType.Action) is null or true) return;
+
+        _inputType = InputType.Jump;
+    }
+
+    bool IsGroundCheck()
+    {
+        var check = false;
+        var hit = Physics.OverlapSphere(_thisTransform.position, _groundCheckRadius, _groundLayer);
+
+        if (hit.Length > 0)
+        {
+            check = true;
+        }
+
+        return check;
+    }
+
+    enum InputType
+    {
+        None = 0,
+        Jump = 1,
+        Action = 2,
     }
 }

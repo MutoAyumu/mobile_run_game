@@ -6,16 +6,20 @@ using System;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public partial class PlayerController : MonoBehaviour, IDamage
+public class PlayerController : MonoBehaviour, IDamage
 {
     #region ïœêî
+    PlayerMoveState _moveState;
+    PlayerJumpState _jumpState;
+    PlayerActionState _actionState;
+
     [Header("Health")]
     [SerializeField] ReactiveProperty<float> _health = new ReactiveProperty<float>(3);
 
     readonly Subject<Unit> _enableSub = new Subject<Unit>();
     readonly Subject<Unit> _disableSub = new Subject<Unit>();
 
-    InputPlayer _input;
+    InputSystemManager _input;
     StatePatternBase<PlayerController> _statePattern;
     Rigidbody _rb;
     Animator _anim;
@@ -40,7 +44,6 @@ public partial class PlayerController : MonoBehaviour, IDamage
 
     void Init()
     {
-        _input = new InputPlayer();
         _statePattern = new StatePatternBase<PlayerController>(this);
         _statePattern.Add<PlayerMoveState>((int)StateType.Move);
         _statePattern.Add<PlayerJumpState>((int)StateType.Jump);
@@ -80,7 +83,16 @@ public partial class PlayerController : MonoBehaviour, IDamage
             _statePattern.ChangeState((int)StateType.Dead);
         }
     }
-    enum StateType
+
+    private void OnDrawGizmosSelected()
+    {
+        var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pos, _jumpState. _groundCheckRadius);
+    }
+
+    public enum StateType
     {
         Dead = -1,
         Move = 0,

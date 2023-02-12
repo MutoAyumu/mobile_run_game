@@ -2,25 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using StateBase = StatePatternBase<PlayerController>.StateBase;
 
-public partial class PlayerController
+public class PlayerDeadState : IState
 {
     #region 変数
 
     #endregion
 
     #region プロパティ
-
+    public int Type => throw new System.NotImplementedException();
     #endregion
 
-    public class PlayerDeadState : StateBase
+    public void Init()
     {
-        #region 変数
+        throw new System.NotImplementedException();
+    }
 
-        #endregion
+    public void OnEnter()
+    {
+        throw new System.NotImplementedException();
+    }
 
-        #region プロパティ
-        #endregion
+    public void OnExit()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public int OnUpdate()
+    {
+        throw new System.NotImplementedException();
     }
 }

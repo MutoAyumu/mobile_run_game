@@ -4,24 +4,25 @@ using UniRx;
 using System;
 using UnityEngine.InputSystem.LowLevel;
 
-public class InputPlayer
+public class InputSystemManager
 {
     #region 変数
     GameInputs _inputs;
-    ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
-    ReactiveProperty<TouchState> _touchState = new ReactiveProperty<TouchState>();
+    Vector2 _moveVector;
+    TouchState _touchState;
     Subject<Unit> _jumpSub = new Subject<Unit>();
     Subject<Unit> _actionSub = new Subject<Unit>();
     #endregion
 
     #region プロパティ
-    public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
-    public IReadOnlyReactiveProperty<TouchState> TouchState => _touchState;
+    public static InputSystemManager Instance => new InputSystemManager();
+    public Vector2 MoveVector => _moveVector;
+    public TouchState TouchState => _touchState;
     public IObservable<Unit> JumpSub => _jumpSub;
     public IObservable<Unit> ActionSub => _actionSub;
     #endregion
 
-    public InputPlayer()
+    private InputSystemManager()
     {
         _inputs = new GameInputs();
         _inputs.Player.Jump.performed += OnInputJump;
@@ -36,7 +37,7 @@ public class InputPlayer
     #region InputEvent
     void OnInputMove(InputAction.CallbackContext context)
     {
-        _moveVector.Value = context.ReadValue<Vector2>();
+        _moveVector = context.ReadValue<Vector2>();
     }
     void OnInputJump(InputAction.CallbackContext context)
     {
@@ -44,7 +45,7 @@ public class InputPlayer
     }
     void OnInputTouch(InputAction.CallbackContext context)
     {
-        _touchState.Value = context.ReadValue<TouchState>();
+        _touchState = context.ReadValue<TouchState>();
     }
     void OnInputAction(InputAction.CallbackContext context)
     {

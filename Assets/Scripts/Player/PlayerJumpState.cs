@@ -2,30 +2,48 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using StateBase = StatePatternBase<PlayerController>.StateBase;
 
-public partial class PlayerController
+public class PlayerJumpState : IState
 {
     [Header("Jump")]
     [SerializeField] float _jumpPower = 1;
-    [Header("IsGroundCheck")]
-    [SerializeField] float _groundCheckRadius = 1f;
 
-    public class PlayerJumpState : StateBase
+    Rigidbody _rb;
+    Animator _anim;
+
+    public int Type => (int)PlayerController.StateType.Jump;
+
+    public void Init()
+    {
+        TryGetComponent(out _rb);
+        TryGetComponent(out _anim);
+    }
+
+    public void OnEnter()
+    {
+        OnJump();
+    }
+
+    public int OnUpdate()
+    {
+        return (int)PlayerController.StateType.Move;
+    }
+
+    public void OnEixt()
     {
 
-        public override void OnEnter()
-        {
-            OnJump();
-            StatePattern.ChangeState((int)StateType.Move);
-        }
+    }
 
-        void OnJump()
-        {
-            var vel = Owner._rb.velocity;
-            vel.y = 0;
-            Owner._rb.velocity = vel;
-            Owner._rb.AddForce(Vector3.up * Owner._jumpPower, ForceMode.VelocityChange);
-        }
+    void OnJump()
+    {
+        var vel = _rb.velocity;
+        vel.y = 0;
+        _rb.velocity = vel;
+        _rb.AddForce(Vector3.up * _jumpPower, ForceMode.VelocityChange);
+    }
+
+    public void OnExit()
+    {
+        throw new System.NotImplementedException();
     }
 }

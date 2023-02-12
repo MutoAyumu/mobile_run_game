@@ -3,28 +3,17 @@ using UnityEngine;
 
 public class StatePatternBase<TOwner>
 {
-    public abstract class StateBase
-    {
-        public StatePatternBase<TOwner> StatePattern;
-        protected TOwner Owner => StatePattern.Owner;
-
-        public virtual void Init() { }
-        public virtual void OnEnter() { }
-        public virtual void OnUpdate() { }
-        public virtual void OnExit() { }
-    }
-
-    TOwner Owner { get; }
-    StateBase _currentState;
-    StateBase _prevState;
-    readonly Dictionary<int, StateBase> _states = new Dictionary<int, StateBase>();
+    public TOwner Owner { get; }
+    IState _currentState;
+    IState _prevState;
+    readonly Dictionary<int, IState> _states = new Dictionary<int, IState>();
 
     public StatePatternBase(TOwner owner)
     {
         Owner = owner;
     }
 
-    public void Add<T>(int stateId) where T : StateBase, new()
+    public void Add<T>(int stateId) where T : StateBase<TOwner>, new()
     {
         if (_states.ContainsKey(stateId))
         {
@@ -36,6 +25,7 @@ public class StatePatternBase<TOwner>
         {
             StatePattern = this
         };
+
         newState.Init();
         _states.Add(stateId, newState);
     }
@@ -54,7 +44,12 @@ public class StatePatternBase<TOwner>
 
     public void OnUpdate()
     {
-        _currentState.OnUpdate();
+        var next = _currentState.OnUpdate();
+
+        if(_currentState != _states[next])
+        {
+            ChangeState(next);
+        }
     }
 
     public bool? CheckCurrentStateID(int stateId)
@@ -73,7 +68,7 @@ public class StatePatternBase<TOwner>
         return true;
     }
 
-    public void ChangeState(int stateId)
+    private void ChangeState(int stateId)
     {
         if (!_states.TryGetValue(stateId, out var nextState))
         {
