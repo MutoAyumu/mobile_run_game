@@ -2,12 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using StateBase = StatePatternBase<EnemyController>.StateBase;
 
-public partial class EnemyController
+public class EnemyDeadState : IState
 {
-    public class EnemyDeadState : StateBase
+    public void Init()
     {
+        throw new System.NotImplementedException();
+    }
 
+    public void OnEnter()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnExit()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public int OnUpdate()
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -13,7 +13,7 @@ public class StatePatternBase<TOwner>
         Owner = owner;
     }
 
-    public void Add<T>(int stateId) where T : StateBase<TOwner>, new()
+    public void Add<T>(int stateId) where T : IState, new()
     {
         if (_states.ContainsKey(stateId))
         {
@@ -23,7 +23,7 @@ public class StatePatternBase<TOwner>
 
         var newState = new T
         {
-            StatePattern = this
+
         };
 
         newState.Init();

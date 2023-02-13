@@ -3,32 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
-using StateBase = StatePatternBase<EnemyController>.StateBase;
 
-public partial class EnemyController
+public class EnemyIdleState : IState
 {
+    #region 変数
     [Header("Idle")]
     [SerializeField] float _interval = 2f;
 
-    public class EnemyIdleState : StateBase
+    Timer _intervalTimer = new Timer();
+    #endregion
+
+    #region プロパティ
+    #endregion
+
+    public void Init()
     {
-        #region 変数
-        Timer _intervalTimer = new Timer();
-        #endregion
+        _intervalTimer.Setup(_interval);
+    }
 
-        #region プロパティ
-        #endregion
+    public void OnEnter()
+    {
+        throw new System.NotImplementedException();
+    }
 
-        public override void Init()
+    public int OnUpdate()
+    {
+        if (_intervalTimer.RunTimer())
         {
-            _intervalTimer.Setup(Owner._interval);
+            return (int)EnemyController.StateType.Attack;
         }
-        public override void OnUpdate()
-        {
-            if (_intervalTimer.RunTimer())
-            {
-                StatePattern.ChangeState((int)StateType.Attack);
-            }
-        }
+
+        return (int)EnemyController.StateType.Idle;
+    }
+    public void OnExit()
+    {
+        throw new System.NotImplementedException();
     }
 }

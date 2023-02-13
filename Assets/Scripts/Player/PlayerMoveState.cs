@@ -2,7 +2,7 @@ using UnityEngine;
 using UniRx;
 
 [System.Serializable]
-public class PlayerMoveState : StateBase<>
+public class PlayerMoveState : IState
 {
     [Header("Move")]
     [SerializeField] float _moveSpeed = 1;
@@ -19,8 +19,6 @@ public class PlayerMoveState : StateBase<>
 
     const string JUMP_PARAM = "IsJump";
     const string GROUND_LAYER_NAME = "Ground";
-
-    public int Type => (int)PlayerController.StateType.Move;
 
     public void Init()
     {

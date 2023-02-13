@@ -23,8 +23,6 @@ public class PlayerActionState : IState
 
     public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
 
-    public int Type => (int)PlayerController.StateType.Action;
-
     const string ACTION_PARENT_TAG = "ActionParent";
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
     const string ATTACK_ANIMATION_TAG = "Attack";

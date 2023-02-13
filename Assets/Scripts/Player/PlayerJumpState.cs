@@ -11,8 +11,6 @@ public class PlayerJumpState : IState
     Rigidbody _rb;
     Animator _anim;
 
-    public int Type => (int)PlayerController.StateType.Jump;
-
     public void Init()
     {
         TryGetComponent(out _rb);

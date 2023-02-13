@@ -67,22 +67,17 @@ public partial class EnemyController : MonoBehaviour, IDamage
 
         if (_health.Value <= 0)
         {
-            _statePattern.ChangeState((int)StateType.Dead);
+            //_statePattern.ChangeState((int)StateType.Dead);
             _anim.SetTrigger(DEATH_PARAM);
             return;
         }
 
         _anim.SetTrigger(TAKEDAMAGE_PARAM);
     }
-    enum StateType
+    public enum StateType
     {
         Dead = -1,
         Idle = 0,
         Attack = 1,
     }
-}
-public enum LifeState
-{
-    Normal,
-    Dead
 }
