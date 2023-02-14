@@ -13,18 +13,13 @@ public class StatePatternBase<TOwner>
         Owner = owner;
     }
 
-    public void Add<T>(int stateId) where T : IState, new()
+    public void Add(int stateId, IState newState)
     {
         if (_states.ContainsKey(stateId))
         {
             Debug.LogError("既に登録されたIDです : " + stateId);
             return;
         }
-
-        var newState = new T
-        {
-
-        };
 
         newState.Init();
         _states.Add(stateId, newState);

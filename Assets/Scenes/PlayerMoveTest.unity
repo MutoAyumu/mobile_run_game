@@ -4777,16 +4777,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76bc23494e89cc945b6d2503e13a36f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _setPositions:
-  - {fileID: 1330395698}
-  - {fileID: 2091423705}
-  - {fileID: 1043988428}
-  _layer:
-    serializedVersion: 2
-    m_Bits: 8
-  _health:
-    value: 10
-  _interval: 2
 --- !u!1 &166701278586811893
 GameObject:
   m_ObjectHideFlags: 0
@@ -7439,7 +7429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8855052669007655847}
-  - component: {fileID: 9036980633708873474}
+  - component: {fileID: 9036980633708873472}
   - component: {fileID: 9036980633708873469}
   - component: {fileID: 9036980633708873471}
   - component: {fileID: 9036980633708873470}
@@ -7648,7 +7638,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &9036980633708873474
+--- !u!114 &9036980633708873472
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7660,13 +7650,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d39af343d5790424d958c33188d28d26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _action: {fileID: 818301725750509857, guid: 41d054fa2c6c0a940962cf50db9b52d5, type: 3}
-  _attackType: 1
+  _moveState:
+    _moveSpeed: 1
+    _groundCheckRadius: 1
+    _go: {fileID: 8189980434590017821}
+  _jumpState:
+    _jumpPower: 1
+    _go: {fileID: 8189980434590017821}
+  _actionState:
+    _action: {fileID: 0}
+    _attackType: 1
+    _touchEffect: {fileID: 0}
+    _go: {fileID: 8189980434590017821}
   _health:
     value: 3
-  _jumpPower: 7
-  _groundCheckRadius: 0.2
-  _moveSpeed: 4
 --- !u!1 &9105106661962971400
 GameObject:
   m_ObjectHideFlags: 0

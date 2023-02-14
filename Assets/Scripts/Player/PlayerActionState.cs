@@ -6,19 +6,23 @@ using System;
 using System.Collections.Generic;
 using UniRx.Triggers;
 
+[System.Serializable]
 public class PlayerActionState : IState
 {
+    [Header("Parameter")]
     [SerializeField] AttackAction _action;
     [SerializeField] AttackType _attackType = AttackType.First;
     [SerializeField] Image _touchEffect;
+    [Header("GameObject")]
+    [SerializeField] GameObject _go;
 
     Camera _cam;
     int _tapCount;
     int _actionObjectCount;
     float _attackPower;
+    Animator _anim;
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
-    Animator _anim;
     ReactiveProperty<bool> _isActed = new ReactiveProperty<bool>();
 
     public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
@@ -32,7 +36,7 @@ public class PlayerActionState : IState
     {
         //_touchEffect.enabled = false;
 
-        Owner.TryGetComponent(out _anim);
+        _go.TryGetComponent(out _anim);
         _cam = Camera.main;
         SetAnimationTrigger();
         _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
@@ -139,7 +143,7 @@ public class PlayerActionState : IState
                 {
                     _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)AttackType.None);
                 }
-            }).AddTo(Owner);
+            }).AddTo(_go);
     }
     enum AttackType
     {

@@ -4,31 +4,33 @@ using UniRx;
 [System.Serializable]
 public class PlayerMoveState : IState
 {
-    [Header("Move")]
+    [Header("Parameter")]
     [SerializeField] float _moveSpeed = 1;
     [Header("IsGroundCheck")]
     [SerializeField] float _groundCheckRadius = 1f;
+    [Header("GameObject")]
+    [SerializeField] GameObject _go;
+    Rigidbody _rb;
+    Animator _anim;
+    Transform _thisTransform;
 
     bool _isGroundChecked;
     LayerMask _groundLayer;
     float _currentSpeed;
-    Rigidbody _rb;
-    Animator _anim;
     InputType _inputType;
-    Transform _thisTransform;
 
     const string JUMP_PARAM = "IsJump";
     const string GROUND_LAYER_NAME = "Ground";
 
     public void Init()
     {
+        _go.TryGetComponent(out _rb);
+        _go.TryGetComponent(out _anim);
+        _go.TryGetComponent(out _thisTransform);
         _currentSpeed = _moveSpeed;
-        TryGetComponent(out _rb);
-        TryGetComponent(out _anim);
-        TryGetComponent(out _thisTransform);
         _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
-        InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(Owner);
-        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(Owner);
+        InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(_go);
+        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(_go);
     }
     public void OnEnter()
     {

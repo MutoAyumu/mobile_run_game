@@ -9,9 +9,10 @@ using System;
 public class PlayerController : MonoBehaviour, IDamage
 {
     #region ïœêî
-    PlayerMoveState _moveState;
-    PlayerJumpState _jumpState;
-    PlayerActionState _actionState;
+    [SerializeField] PlayerMoveState _moveState;
+    [SerializeField] PlayerJumpState _jumpState;
+    [SerializeField] PlayerActionState _actionState;
+    [SerializeField] PlayerDeadState _deadState;
 
     [Header("Health")]
     [SerializeField] ReactiveProperty<float> _health = new ReactiveProperty<float>(3);
@@ -45,10 +46,10 @@ public class PlayerController : MonoBehaviour, IDamage
     void Init()
     {
         _statePattern = new StatePatternBase<PlayerController>(this);
-        _statePattern.Add<PlayerMoveState>((int)StateType.Move);
-        _statePattern.Add<PlayerJumpState>((int)StateType.Jump);
-        _statePattern.Add<PlayerActionState>((int)StateType.Action);
-        _statePattern.Add<PlayerDeadState>((int)StateType.Dead);
+        _statePattern.Add((int)StateType.Move, _moveState);
+        _statePattern.Add((int)StateType.Jump, _jumpState);
+        _statePattern.Add((int)StateType.Action, _actionState);
+        _statePattern.Add((int)StateType.Dead, _deadState);
 
         _thisTransform = this.transform;
     }
@@ -80,16 +81,16 @@ public class PlayerController : MonoBehaviour, IDamage
 
         if(_health.Value <= 0)
         {
-            _statePattern.ChangeState((int)StateType.Dead);
+            //_statePattern.ChangeState((int)StateType.Dead);
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
+        //var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(pos, _jumpState. _groundCheckRadius);
+        //Gizmos.color = Color.green;
+        //Gizmos.DrawWireSphere(pos, _jumpState. _groundCheckRadius);
     }
 
     public enum StateType

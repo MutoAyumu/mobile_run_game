@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
+[System.Serializable]
 public class PlayerDeadState : IState
 {
     #region ïœêî
@@ -15,7 +16,7 @@ public class PlayerDeadState : IState
 
     public void Init()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public void OnEnter()

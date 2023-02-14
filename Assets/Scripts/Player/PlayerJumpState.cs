@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 
+[System.Serializable]
 public class PlayerJumpState : IState
 {
-    [Header("Jump")]
+    [Header("Parameter")]
     [SerializeField] float _jumpPower = 1;
-
+    [Header("GameObject")]
+    [SerializeField] GameObject _go;
+    
     Rigidbody _rb;
     Animator _anim;
 
     public void Init()
     {
-        TryGetComponent(out _rb);
-        TryGetComponent(out _anim);
+        _go.TryGetComponent(out _rb);
+        _go.TryGetComponent(out _anim);
     }
 
     public void OnEnter()
