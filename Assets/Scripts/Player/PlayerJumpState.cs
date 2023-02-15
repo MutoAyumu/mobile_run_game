@@ -6,6 +6,7 @@ using UniRx;
 [System.Serializable]
 public class PlayerJumpState : IState
 {
+    #region ïœêî
     [Header("Parameter")]
     [SerializeField] float _jumpPower = 1;
     [Header("GameObject")]
@@ -13,6 +14,7 @@ public class PlayerJumpState : IState
     
     Rigidbody _rb;
     Animator _anim;
+    #endregion
 
     public void Init()
     {
@@ -45,6 +47,6 @@ public class PlayerJumpState : IState
 
     public void OnExit()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

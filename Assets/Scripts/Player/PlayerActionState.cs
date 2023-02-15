@@ -9,6 +9,7 @@ using UniRx.Triggers;
 [System.Serializable]
 public class PlayerActionState : IState
 {
+    #region　変数
     [Header("Parameter")]
     [SerializeField] AttackAction _action;
     [SerializeField] AttackType _attackType = AttackType.First;
@@ -16,7 +17,6 @@ public class PlayerActionState : IState
     [Header("GameObject")]
     [SerializeField] GameObject _go;
 
-    Camera _cam;
     int _tapCount;
     int _actionObjectCount;
     float _attackPower;
@@ -24,20 +24,24 @@ public class PlayerActionState : IState
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
     ReactiveProperty<bool> _isActed = new ReactiveProperty<bool>();
+    #endregion
 
+    #region　プロパティ
     public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
+    #endregion
 
+    #region　定数
     const string ACTION_PARENT_TAG = "ActionParent";
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
     const string ATTACK_ANIMATION_TAG = "Attack";
     const string ATTACK_INTEGER_PARAM = "AttackNumber";
+    #endregion
 
     public void Init()
     {
         //_touchEffect.enabled = false;
 
         _go.TryGetComponent(out _anim);
-        _cam = Camera.main;
         SetAnimationTrigger();
         _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
         var objects = GameObject.FindGameObjectsWithTag(ACTION_OBJECT_POSITION);

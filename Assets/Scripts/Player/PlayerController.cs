@@ -20,9 +20,7 @@ public class PlayerController : MonoBehaviour, IDamage
     readonly Subject<Unit> _enableSub = new Subject<Unit>();
     readonly Subject<Unit> _disableSub = new Subject<Unit>();
 
-    InputSystemManager _input;
     StatePatternBase<PlayerController> _statePattern;
-    Rigidbody _rb;
     Animator _anim;
     Transform _thisTransform;
     #endregion
@@ -37,7 +35,6 @@ public class PlayerController : MonoBehaviour, IDamage
 
     private void Awake()
     {
-        TryGetComponent(out _rb);
         TryGetComponent(out _anim);
 
         Init();
@@ -87,10 +84,10 @@ public class PlayerController : MonoBehaviour, IDamage
 
     private void OnDrawGizmosSelected()
     {
-        //var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
+        var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
 
-        //Gizmos.color = Color.green;
-        //Gizmos.DrawWireSphere(pos, _jumpState. _groundCheckRadius);
+        Gizmos.color = _moveState.IsGroundChecked ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(pos, _moveState.Radius);
     }
 
     public enum StateType

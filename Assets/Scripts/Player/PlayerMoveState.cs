@@ -4,23 +4,33 @@ using UniRx;
 [System.Serializable]
 public class PlayerMoveState : IState
 {
+    #region 変数
     [Header("Parameter")]
     [SerializeField] float _moveSpeed = 1;
     [Header("IsGroundCheck")]
     [SerializeField] float _groundCheckRadius = 1f;
     [Header("GameObject")]
     [SerializeField] GameObject _go;
+
     Rigidbody _rb;
     Animator _anim;
     Transform _thisTransform;
-
-    bool _isGroundChecked;
     LayerMask _groundLayer;
-    float _currentSpeed;
     InputType _inputType;
+    Vector2 _dir;
+    float _currentSpeed;
+    bool _isGroundChecked;
+    #endregion
 
+    #region プロパティ
+    public bool IsGroundChecked => _isGroundChecked;
+    public float Radius => _groundCheckRadius;
+    #endregion
+
+    #region 定数
     const string JUMP_PARAM = "IsJump";
     const string GROUND_LAYER_NAME = "Ground";
+    #endregion
 
     public void Init()
     {
@@ -31,6 +41,7 @@ public class PlayerMoveState : IState
         _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
         InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(_go);
         InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(_go);
+        InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(_go);
     }
     public void OnEnter()
     {
@@ -39,7 +50,7 @@ public class PlayerMoveState : IState
 
     public void OnExit()
     {
-        
+        _inputType = InputType.None;
     }
     public int OnUpdate()
     {
@@ -56,13 +67,17 @@ public class PlayerMoveState : IState
 
         return id;
     }
+    
+    void OnSetDirection(Vector2 vec)
+    {
+        _dir = vec;
+    }
+
     int OnMove()
     {
-        var dir = InputSystemManager.Instance.MoveVector;
-
-        if (dir != Vector2.zero)
+        if (_dir != Vector2.zero)
         {
-            var vel = new Vector3(dir.x, 0, 0).normalized * _currentSpeed;
+            var vel = new Vector3(_dir.x, 0, 0).normalized * _currentSpeed;
             vel.y = _rb.velocity.y;
             _rb.velocity = vel;
         }
@@ -80,7 +95,7 @@ public class PlayerMoveState : IState
 
     void OnJump()
     {
-        if (!_isGroundChecked)// || Owner._statePattern.CheckCurrentStateID((int)PlayerController.StateType.Action) is null or true) return;
+        if (!_isGroundChecked) return;// || Owner._statePattern.CheckCurrentStateID((int)PlayerController.StateType.Action) is null or true) return;
 
         _inputType = InputType.Jump;
     }
