@@ -14,6 +14,10 @@ public class PlayerDeadState : IState
     public int Type => throw new System.NotImplementedException();
     #endregion
 
+    #region ’è”
+    const string PLAYER_TAG = "Player";
+    #endregion
+
     public void Init()
     {
         

@@ -9,17 +9,22 @@ public class PlayerJumpState : IState
     #region ïœêî
     [Header("Parameter")]
     [SerializeField] float _jumpPower = 1;
-    [Header("GameObject")]
-    [SerializeField] GameObject _go;
-    
+
+    GameObject _player;
     Rigidbody _rb;
     Animator _anim;
     #endregion
 
+    #region íËêî
+    const string PLAYER_TAG = "Player";
+    #endregion
+
     public void Init()
     {
-        _go.TryGetComponent(out _rb);
-        _go.TryGetComponent(out _anim);
+        _player = GameObject.FindGameObjectWithTag(PLAYER_TAG);
+
+        _player.TryGetComponent(out _rb);
+        _player.TryGetComponent(out _anim);
     }
 
     public void OnEnter()

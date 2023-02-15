@@ -13,13 +13,13 @@ public class PlayerActionState : IState
     [Header("Parameter")]
     [SerializeField] AttackAction _action;
     [SerializeField] AttackType _attackType = AttackType.First;
-    [SerializeField] Image _touchEffect;
-    [Header("GameObject")]
-    [SerializeField] GameObject _go;
+    [SerializeField] bool _isDebug;
 
     int _tapCount;
     int _actionObjectCount;
     float _attackPower;
+
+    GameObject _player;
     Animator _anim;
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
@@ -35,30 +35,45 @@ public class PlayerActionState : IState
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
     const string ATTACK_ANIMATION_TAG = "Attack";
     const string ATTACK_INTEGER_PARAM = "AttackNumber";
+    const string PLAYER_TAG = "Player";
     #endregion
 
     public void Init()
     {
-        //_touchEffect.enabled = false;
-
-        _go.TryGetComponent(out _anim);
-        SetAnimationTrigger();
         _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
         var objects = GameObject.FindGameObjectsWithTag(ACTION_OBJECT_POSITION);
         _actionOrizinPositions = Array.ConvertAll(objects, go => go.transform);
+        _player = GameObject.FindGameObjectWithTag(PLAYER_TAG);
+
+        InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(_player);
+        _player.TryGetComponent(out _anim);
+        SetAnimationTrigger();
     }
 
     public void OnEnter()
     {
-        OnAction();
-        _tapCount -= 10;
-        _isActed.Value = true;
-        CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
-        CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
+        if (_isDebug)
+            _tapCount = 100;
     }
 
     public int OnUpdate()
     {
+        if(!_isActed.Value)
+        {
+            if(_tapCount >= 10)
+            {
+                OnAction();
+                _tapCount -= 10;
+                _isActed.Value = true;
+                CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
+                CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
+            }
+            else
+            {
+                return (int)PlayerController.StateType.Move;
+            }
+        }
+
         if (_actionObjectCount >= _actionOrizinPositions.Length)
         {
             OnAttack(_attackPower);
@@ -70,37 +85,28 @@ public class PlayerActionState : IState
 
     public void OnExit()
     {
-        _isActed.Value = false;
         _actionObjectCount = 0;
         _attackPower = 0;
-        CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
-        CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
+
+        if (_isActed.Value)
+        {
+            _isActed.Value = false;
+            CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
+            CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
+        }
     }
 
-    void IsInProgress()
+    void TapCount(TouchState state)
     {
-        //ˆÚA—\’è
-        var state = InputSystemManager.Instance.TouchState;
-
         if (state.phase == UnityEngine.InputSystem.TouchPhase.Began)
         {
-            //_touchEffect.enabled = true;
             _tapCount++;
-        }
-        else if (state.phase == UnityEngine.InputSystem.TouchPhase.Ended)
-        {
-            //_touchEffect.enabled = false;
-        }
-
-        if (state.isInProgress)
-        {
-            _touchEffect.transform.position = state.position;
         }
     }
 
     void SubscribeAction(AttackAction action)
     {
-        action.Init(x => OnCount(x));
+        action.Init(OnCount);
     }
 
     void OnAction()
@@ -147,7 +153,7 @@ public class PlayerActionState : IState
                 {
                     _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)AttackType.None);
                 }
-            }).AddTo(_go);
+            }).AddTo(_player);
     }
     enum AttackType
     {

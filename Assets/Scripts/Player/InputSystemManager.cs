@@ -9,7 +9,7 @@ public class InputSystemManager
     #region 変数
     GameInputs _inputs;
     ReactiveProperty<Vector2> _moveVector = new ReactiveProperty<Vector2>();
-    TouchState _touchState;
+    ReactiveProperty<TouchState> _touchState = new ReactiveProperty<TouchState>();
     Subject<Unit> _jumpSub = new Subject<Unit>();
     Subject<Unit> _actionSub = new Subject<Unit>();
     #endregion
@@ -17,7 +17,7 @@ public class InputSystemManager
     #region プロパティ
     public static InputSystemManager Instance => new InputSystemManager();
     public IReadOnlyReactiveProperty<Vector2> MoveVector => _moveVector;
-    public TouchState TouchState => _touchState;
+    public IReadOnlyReactiveProperty<TouchState> TouchState => _touchState;
     public IObservable<Unit> JumpSub => _jumpSub;
     public IObservable<Unit> ActionSub => _actionSub;
     #endregion
@@ -45,7 +45,7 @@ public class InputSystemManager
     }
     void OnInputTouch(InputAction.CallbackContext context)
     {
-        _touchState = context.ReadValue<TouchState>();
+        _touchState.Value = context.ReadValue<TouchState>();
     }
     void OnInputAction(InputAction.CallbackContext context)
     {

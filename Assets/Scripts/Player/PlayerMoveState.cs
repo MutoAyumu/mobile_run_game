@@ -9,9 +9,8 @@ public class PlayerMoveState : IState
     [SerializeField] float _moveSpeed = 1;
     [Header("IsGroundCheck")]
     [SerializeField] float _groundCheckRadius = 1f;
-    [Header("GameObject")]
-    [SerializeField] GameObject _go;
-
+    
+    GameObject _player;
     Rigidbody _rb;
     Animator _anim;
     Transform _thisTransform;
@@ -30,18 +29,23 @@ public class PlayerMoveState : IState
     #region ’è”
     const string JUMP_PARAM = "IsJump";
     const string GROUND_LAYER_NAME = "Ground";
+    const string PLAYER_TAG = "Player";
     #endregion
 
     public void Init()
     {
-        _go.TryGetComponent(out _rb);
-        _go.TryGetComponent(out _anim);
-        _go.TryGetComponent(out _thisTransform);
+        _player = GameObject.FindGameObjectWithTag(PLAYER_TAG);
+
+        _player.TryGetComponent(out _rb);
+        _player.TryGetComponent(out _anim);
+        _player.TryGetComponent(out _thisTransform);
+
         _currentSpeed = _moveSpeed;
         _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
-        InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(_go);
-        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(_go);
-        InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(_go);
+
+        InputSystemManager.Instance.JumpSub.Subscribe(_ => OnJump()).AddTo(_player);
+        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnAction()).AddTo(_player);
+        InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(_player);
     }
     public void OnEnter()
     {
@@ -95,7 +99,7 @@ public class PlayerMoveState : IState
 
     void OnJump()
     {
-        if (!_isGroundChecked) return;// || Owner._statePattern.CheckCurrentStateID((int)PlayerController.StateType.Action) is null or true) return;
+        if (!_isGroundChecked) return;
 
         _inputType = InputType.Jump;
     }
