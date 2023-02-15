@@ -5,39 +5,44 @@ using UniRx;
 using UniRx.Triggers;
 
 [System.Serializable]
-public class EnemyIdleState// : IState
+public class EnemyIdleState : IState
 {
-    //#region 変数
-    //[Header("Idle")]
-    //[SerializeField] float _interval = 2f;
+    #region 変数
+    [SerializeField] float _interval = 2f;
 
-    //Timer _intervalTimer = new Timer();
-    //#endregion
+    Timer _intervalTimer = new Timer();
+    GameObject _owner;
+    #endregion
 
-    //#region プロパティ
-    //#endregion
+    #region プロパティ
+    #endregion
 
-    //public void Init()
-    //{
-    //    _intervalTimer.Setup(_interval);
-    //}
+    #region 定数
+    const string OWNER_TAG = "Enemy";
+    #endregion
 
-    //public void OnEnter()
-    //{
-    //    throw new System.NotImplementedException();
-    //}
+    public void Init()
+    {
+        _intervalTimer.Setup(_interval);
+        _owner = GameObject.FindGameObjectWithTag(OWNER_TAG);
+    }
 
-    //public int OnUpdate()
-    //{
-    //    if (_intervalTimer.RunTimer())
-    //    {
-    //        return (int)EnemyController.StateType.Attack;
-    //    }
+    public void OnEnter()
+    {
+        
+    }
 
-    //    return (int)EnemyController.StateType.Idle;
-    //}
-    //public void OnExit()
-    //{
-    //    throw new System.NotImplementedException();
-    //}
+    public int OnUpdate()
+    {
+        if (_intervalTimer.RunTimer())
+        {
+            return (int)EnemyController.StateType.Attack;
+        }
+
+        return (int)EnemyController.StateType.Idle;
+    }
+    public void OnExit()
+    {
+        
+    }
 }

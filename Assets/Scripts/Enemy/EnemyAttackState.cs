@@ -5,72 +5,85 @@ using UnityEngine;
 using UniRx;
 
 [System.Serializable]
-public class EnemyAttackState// : IState
+public class EnemyAttackState : IState
 {
-    //#region 変数
-    //[Header("Attack")]
-    //[SerializeField] Transform[] _setPositions;
-    //[SerializeField] LayerMask _layer;
-    //ArrangementObjectGenerator _generator;
-    //#endregion
+    #region 変数
+    [SerializeField] Transform[] _setPositions;
+    [SerializeField] LayerMask _layer;
 
-    //#region プロパティ
-    //#endregion
+    ArrangementObjectGenerator _generator;
+    GameObject _owner;
+    Animator _anim;
+    Transform _thisTransform;
+    bool _isAttack;
+    #endregion
 
-    //const string ATTACK_PARAM = "IsAttack";
-    //const string ATTACK_ANIMATION_TAG = "Attack";
+    #region プロパティ
+    #endregion
 
-    //public void Init()
-    //{
-    //    SetAnimationTrigger();
-    //}
+    #region 定数
+    const string ATTACK_PARAM = "IsAttack";
+    const string ATTACK_ANIMATION_TAG = "Attack";
+    const string OWNER_TAG = "Enemy";
+    #endregion
 
-    //public void OnEnter()
-    //{
-    //    Owner._anim.SetTrigger(ATTACK_PARAM);
-    //}
-    //public int OnUpdate()
-    //{
-    //    throw new System.NotImplementedException();
-    //}
+    public void Init()
+    {
+        _owner = GameObject.FindGameObjectWithTag(OWNER_TAG);
+        _owner.TryGetComponent(out _anim);
+        _owner.TryGetComponent(out _thisTransform);
+        _owner.TryGetComponent(out _generator);
 
-    //public void OnExit()
-    //{
-    //    throw new System.NotImplementedException();
-    //}
+        SetAnimationTrigger();
+    }
 
-    //void SetAnimationTrigger()
-    //{
-    //    var trigger = Owner._anim.GetBehaviour<ObservableStateMachineTrigger>();
+    public void OnEnter()
+    {
+        _anim.SetTrigger(ATTACK_PARAM);
+    }
+    public int OnUpdate()
+    {
+        if(_isAttack)
+        {
+            return (int)EnemyController.StateType.Idle;
+        }
 
-    //    trigger
-    //        .OnStateExitAsObservable()
-    //        .Subscribe(stateInfo =>
-    //        {
-    //            var info = stateInfo.StateInfo;
+        return (int)EnemyController.StateType.Attack;
+    }
 
-    //            if (info.IsTag(ATTACK_ANIMATION_TAG))
-    //            {
-    //                OnAttack();
-    //            }
-    //        }).AddTo(Owner);
-    //}
-    //void OnAttack()
-    //{
-    //    if (Owner._statePattern.CheckCurrentStateID((int)StateType.Dead) is null or true) return;
+    public void OnExit()
+    {
+        _isAttack = false;
+    }
 
-    //    var r = Random.Range(0, Owner._setPositions.Length);
-    //    var obj = Owner._generator.OnCreate();
-    //    obj.position = Owner._setPositions[r].position;
-    //    obj.SetParent(CheckParent());
+    void SetAnimationTrigger()
+    {
+        var trigger = _anim.GetBehaviour<ObservableStateMachineTrigger>();
 
-    //    //もしかしたらこのタイミングで死者蘇生される可能性あり
-    //    StatePattern.ChangeState((int)StateType.Idle);
-    //}
-    //Transform CheckParent()
-    //{
-    //    RaycastHit hit;
-    //    Physics.Raycast(Owner._thisTransform.position, Vector3.down, out hit, 3, Owner._layer);
-    //    return hit.transform;
-    //}
+        trigger
+            .OnStateExitAsObservable()
+            .Subscribe(stateInfo =>
+            {
+                var info = stateInfo.StateInfo;
+
+                if (info.IsTag(ATTACK_ANIMATION_TAG))
+                {
+                    OnAttack();
+                    _isAttack = true;
+                }
+            }).AddTo(_owner);
+    }
+    void OnAttack()
+    {
+        var r = Random.Range(0, _setPositions.Length);
+        var obj = _generator.OnCreate();
+        obj.position = _setPositions[r].position;
+        obj.SetParent(CheckParent());
+    }
+    Transform CheckParent()
+    {
+        RaycastHit hit;
+        Physics.Raycast(_thisTransform.position, Vector3.down, out hit, 3, _layer);
+        return hit.transform;
+    }
 }
