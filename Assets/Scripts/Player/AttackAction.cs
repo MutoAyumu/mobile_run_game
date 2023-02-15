@@ -23,7 +23,7 @@ public class AttackAction : MonoBehaviour
         TryGetComponent(out _thisTransform);
         TryGetComponent(out _image);
 
-        Animation(Vector2.one, null);
+        SizeChangeAnim(Vector2.one, null);
     }
     public void Init(System.Action<float> action)
     {
@@ -31,10 +31,10 @@ public class AttackAction : MonoBehaviour
         {
             _image.raycastTarget = false;
             action?.Invoke(_addActionPower);
-            Animation(Vector2.zero, () => Destroy(gameObject));
+            SizeChangeAnim(Vector2.zero, () => Destroy(gameObject));
         }).AddTo(this);
     }
-    void Animation(Vector2 size, System.Action action)
+    void SizeChangeAnim(Vector2 size, System.Action action)
     {
         _thisTransform.DOScale(size, _animSpeed)
             .SetEase(_ease)
@@ -42,5 +42,10 @@ public class AttackAction : MonoBehaviour
             {
                 action?.Invoke();
             });
+    }
+
+    public void Create(Vector2 dir)
+    {
+
     }
 }
