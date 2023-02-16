@@ -11,6 +11,7 @@ public class PlayerActionState : IState
 {
     #region@•Ï”
     [Header("Parameter")]
+    [SerializeField] ActionData _actionData;
     [SerializeField] AttackAction _action;
     [SerializeField] AttackType _attackType = AttackType.First;
     [SerializeField] bool _isDebug;

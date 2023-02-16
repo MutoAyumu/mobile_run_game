@@ -7,6 +7,7 @@ public class CircleAction : IAction
     [SerializeField] float _interval = 0.5f;
     [SerializeField] float _length = 0.2f;
     [SerializeField] Vector2 _viewPort = new Vector2(0.5f, 0.5f);
+    [SerializeField] AttackAction _action;
 
     float _rad;
     Vector2 _origin;
@@ -29,11 +30,12 @@ public class CircleAction : IAction
         
     }
 
-    public void Update(AttackAction action)
+    public void Update()
     {
         if(_timer.RunTimer())
         {
-            Create(action);
+            //var action = GameObject.Instantiate()
+            //Create(action);
         }
     }
     
@@ -44,7 +46,7 @@ public class CircleAction : IAction
         setPos.y = _length * Mathf.Sin(_rad);
 
         var dir = setPos - _origin;
-        action.transform.Translate()
+        action.Create(_origin, dir);
 
         _rad += 0.2f;
     }

@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: ActionData
   m_EditorClassIdentifier: 
   _state:
-    rid: 4022890192293855235
+    rid: 1232265930441490433
   references:
     version: 2
     RefIds:
-    - rid: 4022890192293855235
+    - rid: 1232265930441490433
       type: {class: CircleAction, ns: , asm: Assembly-CSharp}
       data:
         _interval: 0.5
         _length: 0.2
         _viewPort: {x: 0.5, y: 0.5}
+        _action: {fileID: 0}

@@ -9,7 +9,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(ObservablePointerEnterTrigger))]
 public class AttackAction : MonoBehaviour
 {
-    [SerializeField] float _animSpeed = 1f;
+    [SerializeField] float _sizeChangeSpeed = 1f;
+    [SerializeField] float _moveSpeed = 1f;
     [SerializeField] float _addActionPower = 1f;
     [SerializeField] Ease _ease = Ease.Linear;
 
@@ -36,7 +37,7 @@ public class AttackAction : MonoBehaviour
     }
     void SizeChangeAnim(Vector2 size, System.Action action)
     {
-        _thisTransform.DOScale(size, _animSpeed)
+        _thisTransform.DOScale(size, _sizeChangeSpeed)
             .SetEase(_ease)
             .OnComplete(() =>
             {
@@ -44,8 +45,9 @@ public class AttackAction : MonoBehaviour
             });
     }
 
-    public void Create(Vector2 dir)
+    public void Create(Vector2 orizin, Vector2 dir)
     {
-
+        _thisTransform.transform.position = orizin;
+        _thisTransform.DOMove(dir, _moveSpeed);
     }
 }

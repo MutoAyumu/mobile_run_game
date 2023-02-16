@@ -6,6 +6,6 @@ public interface IAction
 {
     public void Init();
     public void Enter();
-    public void Update(AttackAction action);
+    public void Update();
     public void Exit();
 }
