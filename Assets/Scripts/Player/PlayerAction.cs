@@ -1,13 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem.LowLevel;
 using UniRx;
-using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using UniRx.Triggers;
 
-[System.Serializable]
-public class PlayerActionState : IState
+public class PlayerAction : MonoBehaviour
 {
     #region　変数
     [Header("Parameter")]
@@ -16,19 +14,17 @@ public class PlayerActionState : IState
     [SerializeField] AttackType _attackType = AttackType.First;
     [SerializeField] bool _isDebug;
 
-    int _tapCount;
+    int _tapCount = 10000;
     int _actionObjectCount;
     float _attackPower;
 
-    GameObject _player;
     Animator _anim;
     Transform _actionParent;
     Transform[] _actionOrizinPositions;
-    ReactiveProperty<bool> _isActed = new ReactiveProperty<bool>();
+    PlayerController _owner;
     #endregion
 
     #region　プロパティ
-    public IReadOnlyReactiveProperty<bool> IsActed => _isActed;
     #endregion
 
     #region　定数
@@ -39,62 +35,40 @@ public class PlayerActionState : IState
     const string PLAYER_TAG = "Player";
     #endregion
 
-    public void Init()
+    private void Awake()
     {
         _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
         var objects = GameObject.FindGameObjectsWithTag(ACTION_OBJECT_POSITION);
         _actionOrizinPositions = Array.ConvertAll(objects, go => go.transform);
-        _player = GameObject.FindGameObjectWithTag(PLAYER_TAG);
 
-        InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(_player);
-        _player.TryGetComponent(out _anim);
+        InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(this);
+        InputSystemManager.Instance.ActionSub.Subscribe(_ => OnStart()).AddTo(this);
+        
         SetAnimationTrigger();
     }
 
-    public void OnEnter()
+    public void Init(PlayerController owner)
     {
-        if (_isDebug)
-            _tapCount = 100;
+        _owner = owner;
     }
 
-    public int OnUpdate()
+    void OnStart()
     {
-        if(!_isActed.Value)
+        if (_tapCount >= 10)
         {
-            if(_tapCount >= 10)
-            {
-                OnAction();
-                _tapCount -= 10;
-                _isActed.Value = true;
-                CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
-                CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
-            }
-            else
-            {
-                return (int)PlayerController.StateType.Move;
-            }
+            OnAction();
+            _tapCount -= 10;
+            CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
+            CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
         }
-
-        if (_actionObjectCount >= _actionOrizinPositions.Length)
-        {
-            OnAttack(_attackPower);
-            return (int)PlayerController.StateType.Move;
-        }
-
-        return (int)PlayerController.StateType.Action;
     }
 
-    public void OnExit()
+    public void OnFinish()
     {
         _actionObjectCount = 0;
         _attackPower = 0;
-
-        if (_isActed.Value)
-        {
-            _isActed.Value = false;
-            CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
-            CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
-        }
+        CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
+        CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
     }
 
     void TapCount(TouchState state)
@@ -117,7 +91,7 @@ public class PlayerActionState : IState
         for (int i = 0; i < _actionOrizinPositions.Length; i++)
         {
             var r = UnityEngine.Random.Range(0, list.Count);
-            var obj = GameObject.Instantiate(_action, list[r].position, Quaternion.identity, _actionParent);
+            var obj = Instantiate(_action, list[r].position, Quaternion.identity, _actionParent);
             obj.name = $"Action[{r}]";
             SubscribeAction(obj);
             list.RemoveAt(r);
@@ -128,7 +102,19 @@ public class PlayerActionState : IState
     {
         _actionObjectCount++;
         _attackPower += power;
+
+        CheckCount();
     }
+    
+    void CheckCount()
+    {
+        if (_actionObjectCount >= _actionOrizinPositions.Length)
+        {
+            OnAttack(_attackPower);
+            OnFinish();
+        }
+    }
+
     void OnAttack(float power)
     {
         var targets = FieldManager.Instance.Targets;
@@ -142,6 +128,7 @@ public class PlayerActionState : IState
     }
     void SetAnimationTrigger()
     {
+        TryGetComponent(out _anim);
         var trigger = _anim.GetBehaviour<ObservableStateMachineTrigger>();
 
         trigger
@@ -154,7 +141,7 @@ public class PlayerActionState : IState
                 {
                     _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)AttackType.None);
                 }
-            }).AddTo(_player);
+            }).AddTo(this);
     }
     enum AttackType
     {

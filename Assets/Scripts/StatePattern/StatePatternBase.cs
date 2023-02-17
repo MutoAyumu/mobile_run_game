@@ -1,19 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class StatePatternBase<TOwner>
+public class StatePatternBase
 {
-    public TOwner Owner { get; }
+    int _currentStateID;
     IState _currentState;
     IState _prevState;
     readonly Dictionary<int, IState> _states = new Dictionary<int, IState>();
 
-    public StatePatternBase(TOwner owner)
-    {
-        Owner = owner;
-    }
+    public int CurrentStateID => _currentStateID;
 
-    public void Add(int stateId, IState newState)
+    public void Add<T>(int stateId) where T : IState, new()
     {
         if (_states.ContainsKey(stateId))
         {
@@ -21,7 +18,8 @@ public class StatePatternBase<TOwner>
             return;
         }
 
-        newState.Init();
+        var newState = new T();
+
         _states.Add(stateId, newState);
     }
 
@@ -33,6 +31,7 @@ public class StatePatternBase<TOwner>
             return;
         }
 
+        _currentStateID = stateId;
         _currentState = nextState;
         _currentState.OnEnter();
     }
@@ -73,6 +72,7 @@ public class StatePatternBase<TOwner>
 
         Debug.Log($"CurrentState {_currentState} : NextState {nextState}");
 
+        _currentStateID = stateId;
         _prevState = _currentState;
         _currentState.OnExit();
         _currentState = nextState;

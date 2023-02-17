@@ -14,7 +14,7 @@ public partial class EnemyController : MonoBehaviour, IDamage
     [SerializeField] FloatReactiveProperty _health = new FloatReactiveProperty(10);
 
     Animator _anim;
-    StatePatternBase<EnemyController> _statePattern;
+    StatePatternBase _statePattern;
     #endregion
 
     #region プロパティ
@@ -39,10 +39,10 @@ public partial class EnemyController : MonoBehaviour, IDamage
     {
         TryGetComponent(out _anim);
 
-        _statePattern = new StatePatternBase<EnemyController>(this);
-        _statePattern.Add((int)StateType.Dead, _deadState);
-        _statePattern.Add((int)StateType.Idle, _IdleState);
-        _statePattern.Add((int)StateType.Attack, _attackState);
+        _statePattern = new StatePatternBase();
+        //_statePattern.Add((int)StateType.Dead);
+        //_statePattern.Add((int)StateType.Idle);
+        //_statePattern.Add((int)StateType.Attack);
     }
 
     private void OnEnable()

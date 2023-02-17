@@ -6,35 +6,35 @@ using System;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour, IDamage
+[RequireComponent(typeof(PlayerMove))]
+[RequireComponent(typeof(PlayerJump))]
+[RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerAction))]
+public class PlayerController : MonoBehaviour
 {
     #region 変数
-    [SerializeField] PlayerMoveState _moveState;
-    [SerializeField] PlayerJumpState _jumpState;
-    [SerializeField] PlayerActionState _actionState;
-    [SerializeField] PlayerDeadState _deadState;
-
-    [Header("Health")]
-    [SerializeField] ReactiveProperty<float> _health = new ReactiveProperty<float>(3);
-
-    readonly Subject<Unit> _enableSub = new Subject<Unit>();
-    readonly Subject<Unit> _disableSub = new Subject<Unit>();
-
-    StatePatternBase<PlayerController> _statePattern;
-    Animator _anim;
+    StatePatternBase _statePattern;
     Transform _thisTransform;
+    Animator _anim;
+    PlayerMove _move;
+    PlayerJump _jump;
+    PlayerHealth _health;
+    PlayerAction _action;
     #endregion
 
     #region プロパティ
-    public IObservable<Unit> OnEnableSub => _enableSub.TakeUntilDestroy(this);
-    public IObservable<Unit> OnDisableSub => _disableSub.TakeUntilDestroy(this);
-    public IReadOnlyReactiveProperty<float> Health => _health;
+    public StatePatternBase StatePattern => _statePattern;
     #endregion
 
-    const string TAKEDAMAGE_PARAM = "IsTakeDamage";
+    const string JUMP_PARAM = "IsJump";
 
     private void Awake()
     {
+        TryGetComponent(out _move);
+        TryGetComponent(out _jump);
+        TryGetComponent(out _health);
+        TryGetComponent(out _action);
+        TryGetComponent(out _thisTransform);
         TryGetComponent(out _anim);
 
         Init();
@@ -42,13 +42,13 @@ public class PlayerController : MonoBehaviour, IDamage
 
     void Init()
     {
-        _statePattern = new StatePatternBase<PlayerController>(this);
-        _statePattern.Add((int)StateType.Move, _moveState);
-        _statePattern.Add((int)StateType.Jump, _jumpState);
-        _statePattern.Add((int)StateType.Action, _actionState);
-        _statePattern.Add((int)StateType.Dead, _deadState);
+        _statePattern = new StatePatternBase();
+        _statePattern.Add<PlayerMoveState>((int)StateType.Move);
+        _statePattern.Add<PlayerJumpState>((int)StateType.Jump);
+        _statePattern.Add<PlayerActionState>((int)StateType.Action);
+        _statePattern.Add<PlayerDeadState>((int)StateType.Dead);
 
-        _thisTransform = this.transform;
+        _jump.Init(this);
     }
 
     private void Start()
@@ -56,38 +56,27 @@ public class PlayerController : MonoBehaviour, IDamage
         _statePattern.OnStart((int)StateType.Move);
     }
 
-    private void OnEnable()
-    {
-        _enableSub.OnNext(Unit.Default);
-    }
-
-    private void OnDisable()
-    {
-        _disableSub.OnNext(Unit.Default);
-    }
-
     private void Update()
     {
         _statePattern.OnUpdate();
-    }
 
-    public void TakeDamage(float damage)
-    {
-        _health.Value -= damage;
-        _anim.SetTrigger(TAKEDAMAGE_PARAM);
-
-        if(_health.Value <= 0)
+        switch(_statePattern.CurrentStateID)
         {
-            //_statePattern.ChangeState((int)StateType.Dead);
+            case (int)StateType.Move:
+                _move.OnMove();
+                break;
+            case (int)StateType.Jump:
+                _jump.OnJump();
+                break;
+            case (int)StateType.Action:
+                break;
+            case (int)StateType.Dead:
+                break;
+            default:
+                break;
         }
-    }
 
-    private void OnDrawGizmosSelected()
-    {
-        var pos = Application.isPlaying ? _thisTransform.position : this.transform.position;
-
-        Gizmos.color = _moveState.IsGroundChecked ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(pos, _moveState.Radius);
+        _anim.SetBool(JUMP_PARAM, !_jump.IsGround);
     }
 
     public enum StateType
