@@ -15,7 +15,7 @@ public class PlayerMoveState : IState
     public PlayerMoveState()
     {
         InputSystemManager.Instance.JumpSub.Subscribe(_ => ChangeType(InputType.Jump));
-        InputSystemManager.Instance.ActionSub.Subscribe(_ => ChangeType(InputType.Action));
+        ActionSystem.Instance.Action.Subscribe(_ => ChangeType(InputType.Action));
     }
 
     public void OnEnter()

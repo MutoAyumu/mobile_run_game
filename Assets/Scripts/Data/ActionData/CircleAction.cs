@@ -14,6 +14,11 @@ public class CircleAction : IAction
     Camera _cam;
     UnscaledTimer _timer = new UnscaledTimer();
 
+    public CircleAction()
+    {
+        Init();
+    }
+
     public void Init()
     {
         _cam = Camera.main;
@@ -30,13 +35,15 @@ public class CircleAction : IAction
         
     }
 
-    public void Update()
+    public bool Update()
     {
         if(_timer.RunTimer())
         {
-            //var action = GameObject.Instantiate()
-            //Create(action);
+            var action = GameObject.Instantiate()
+            Create(action);
         }
+
+        return false;
     }
     
     void Create(AttackAction action)

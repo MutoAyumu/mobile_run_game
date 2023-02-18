@@ -6,6 +6,6 @@ public interface IAction
 {
     public void Init();
     public void Enter();
-    public void Update();
+    public bool Update();
     public void Exit();
 }
