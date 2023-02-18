@@ -7,7 +7,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(ObservablePointerEnterTrigger))]
-public class AttackAction : MonoBehaviour
+public class AttackAction : MonoBehaviour, IObjectPool
 {
     [SerializeField] float _sizeChangeSpeed = 1f;
     [SerializeField] float _moveSpeed = 1f;
@@ -17,6 +17,8 @@ public class AttackAction : MonoBehaviour
     ObservablePointerEnterTrigger _enterTrigger;
     Transform _thisTransform;
     Image _image;
+
+    public bool IsActive => throw new System.NotImplementedException();
 
     private void Awake()
     {
@@ -49,5 +51,20 @@ public class AttackAction : MonoBehaviour
     {
         _thisTransform.transform.position = orizin;
         _thisTransform.DOMove(dir, _moveSpeed);
+    }
+
+    public void DisactiveForInstantiate()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Create()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Destroy()
+    {
+        throw new System.NotImplementedException();
     }
 }

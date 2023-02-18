@@ -32,7 +32,6 @@ public class PlayerAction : MonoBehaviour
     const string ACTION_OBJECT_POSITION = "ActionObjPos";
     const string ATTACK_ANIMATION_TAG = "Attack";
     const string ATTACK_INTEGER_PARAM = "AttackNumber";
-    const string PLAYER_TAG = "Player";
     #endregion
 
     private void Awake()

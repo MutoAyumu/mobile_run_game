@@ -7,12 +7,13 @@ public class CircleAction : IAction
     [SerializeField] float _interval = 0.5f;
     [SerializeField] float _length = 0.2f;
     [SerializeField] Vector2 _viewPort = new Vector2(0.5f, 0.5f);
-    [SerializeField] AttackAction _action;
+    [SerializeField] AttackAction _prefab;
 
     float _rad;
     Vector2 _origin;
     Camera _cam;
     UnscaledTimer _timer = new UnscaledTimer();
+    GenericObjectPool<AttackAction> _pool = new GenericObjectPool<AttackAction>();
 
     public CircleAction()
     {
@@ -23,6 +24,10 @@ public class CircleAction : IAction
     {
         _cam = Camera.main;
         _origin = _cam.ViewportToScreenPoint(_viewPort);
+
+        var root = GameObject.FindGameObjectWithTag(IAction.ACTION_PARENT_TAG).transform;
+        _pool.SetBaseObj(_prefab, root);
+        _pool.SetCapacity(IAction.Limit);
     }
 
     public void Enter()
@@ -39,8 +44,8 @@ public class CircleAction : IAction
     {
         if(_timer.RunTimer())
         {
-            var action = GameObject.Instantiate()
-            Create(action);
+            var obj = _pool.Instantiate();
+            Create(obj);
         }
 
         return false;
