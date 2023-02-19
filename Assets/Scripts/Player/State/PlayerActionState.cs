@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
 
 public class PlayerActionState : IState
 {
@@ -10,6 +11,11 @@ public class PlayerActionState : IState
 
     #region プロパティ
     #endregion
+
+    public PlayerActionState()
+    {
+        ActionSystem.Instance.IsCompleted.Subscribe(_ => _inputType = InputType.End);
+    }
 
     public void OnEnter()
     {
@@ -25,7 +31,7 @@ public class PlayerActionState : IState
     {
         var id = (int)PlayerController.StateType.Action;
 
-        if(_inputType == InputType.Begin)
+        if(_inputType == InputType.End)
         {
             id = (int)PlayerController.StateType.Move;
         }

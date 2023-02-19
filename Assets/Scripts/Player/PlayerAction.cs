@@ -10,17 +10,14 @@ public class PlayerAction : MonoBehaviour
     #region@•Ï”
     [Header("Parameter")]
     [SerializeField] ActionData _actionData;
-    [SerializeField] AttackAction _action;
     [SerializeField] AttackType _attackType = AttackType.First;
+    [SerializeField] float _power = 1f;
     [SerializeField] bool _isDebug;
 
     int _tapCount = 10000;
-    int _actionObjectCount;
-    float _attackPower;
+    bool _isCompleted = true;
 
     Animator _anim;
-    Transform _actionParent;
-    Transform[] _actionOrizinPositions;
     PlayerController _owner;
     #endregion
 
@@ -36,13 +33,15 @@ public class PlayerAction : MonoBehaviour
 
     private void Awake()
     {
-        _actionParent = GameObject.FindGameObjectWithTag(ACTION_PARENT_TAG).transform;
-        var objects = GameObject.FindGameObjectsWithTag(ACTION_OBJECT_POSITION);
-        _actionOrizinPositions = Array.ConvertAll(objects, go => go.transform);
-
         InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(this);
         InputSystemManager.Instance.ActionSub.Subscribe(_ => OnStart()).AddTo(this);
         ActionSystem.Instance.Init(this);
+        ActionSystem.Instance.IsCompleted.Subscribe(_ =>
+        { 
+            OnAttack();
+            _isCompleted = true;
+        });
+        ActionSystem.Instance.OnStart(_actionData);
         
         SetAnimationTrigger();
     }
@@ -54,9 +53,11 @@ public class PlayerAction : MonoBehaviour
 
     void OnStart()
     {
+        if (!_isCompleted) return;
+
         if (_tapCount >= 10)
         {
-            OnAction();
+            _isCompleted = false;
             _tapCount -= 10;
             CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
             CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
@@ -64,10 +65,8 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
-    public void OnFinish()
+    void OnFinish()
     {
-        _actionObjectCount = 0;
-        _attackPower = 0;
         CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
         CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
     }
@@ -80,44 +79,9 @@ public class PlayerAction : MonoBehaviour
         }
     }
 
-    void SubscribeAction(AttackAction action)
+    void OnAttack()
     {
-        action.Init(OnCount);
-    }
-
-    void OnAction()
-    {
-        var list = new List<Transform>(_actionOrizinPositions);
-
-        for (int i = 0; i < _actionOrizinPositions.Length; i++)
-        {
-            var r = UnityEngine.Random.Range(0, list.Count);
-            var obj = Instantiate(_action, list[r].position, Quaternion.identity, _actionParent);
-            obj.name = $"Action[{r}]";
-            SubscribeAction(obj);
-            list.RemoveAt(r);
-        }
-    }
-
-    void OnCount(float power)
-    {
-        _actionObjectCount++;
-        _attackPower += power;
-
-        CheckCount();
-    }
-    
-    void CheckCount()
-    {
-        if (_actionObjectCount >= _actionOrizinPositions.Length)
-        {
-            OnAttack(_attackPower);
-            OnFinish();
-        }
-    }
-
-    void OnAttack(float power)
-    {
+        var power = _power * ActionSystem.Instance.SuccessCount;
         var targets = FieldManager.Instance.Targets;
 
         for (int i = 0; i < targets.Count; i++)
@@ -126,6 +90,7 @@ public class PlayerAction : MonoBehaviour
         }
 
         _anim.SetInteger(ATTACK_INTEGER_PARAM, (int)_attackType);
+        OnFinish();
     }
     void SetAnimationTrigger()
     {

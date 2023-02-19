@@ -2134,7 +2134,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1930473941}
   - component: {fileID: 1930473943}
-  - component: {fileID: 1930473942}
   m_Layer: 5
   m_Name: ActionUI
   m_TagString: Untagged
@@ -2164,36 +2163,6 @@ RectTransform:
   m_AnchoredPosition: {x: 322.5813, y: -2.880188}
   m_SizeDelta: {x: -1013.8267, y: -213.1339}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1930473942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1930473940}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1930473943
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7677,9 +7646,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac1b78e6b7a44bd449ba93f12ef26655, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _actionData: {fileID: 0}
-  _action: {fileID: 818301725750509857, guid: 41d054fa2c6c0a940962cf50db9b52d5, type: 3}
+  _actionData: {fileID: 11400000, guid: 556d5d1cec884fe408f8f38a3e260991, type: 2}
   _attackType: 1
+  _power: 1
   _isDebug: 0
 --- !u!114 &9036980633708873473
 MonoBehaviour:

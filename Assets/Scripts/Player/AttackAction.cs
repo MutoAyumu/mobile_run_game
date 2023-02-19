@@ -5,41 +5,48 @@ using UniRx;
 using UniRx.Triggers;
 using DG.Tweening;
 using UnityEngine.UI;
+using System;
 
 [RequireComponent(typeof(ObservablePointerEnterTrigger))]
 public class AttackAction : MonoBehaviour, IObjectPool
 {
     [SerializeField] float _sizeChangeSpeed = 1f;
     [SerializeField] float _moveSpeed = 1f;
-    [SerializeField] float _addActionPower = 1f;
+    [SerializeField] float _destroyTime = 2.5f;
     [SerializeField] Ease _ease = Ease.Linear;
 
     ObservablePointerEnterTrigger _enterTrigger;
+    IDisposable _disposable;
     Transform _thisTransform;
-    Image _image;
+    Vector2 _vec;
+    UnscaledTimer _timer = new UnscaledTimer();
+    bool _isActive;
+    Action _timeOutEvent;
 
-    public bool IsActive => throw new System.NotImplementedException();
+    public bool IsActive => _isActive;
 
     private void Awake()
     {
         TryGetComponent(out _enterTrigger);
         TryGetComponent(out _thisTransform);
-        TryGetComponent(out _image);
 
-        SizeChangeAnim(Vector2.one, null);
+        SizeChangeAnim(Vector2.zero, 0 ,null);
+        _timer.Setup(_destroyTime);
     }
-    public void Init(System.Action<float> action)
+    public void Init(Action pointerEnterEvent, Action timeOutEvent)
     {
-        _enterTrigger.OnPointerEnterAsObservable().Subscribe(_ =>
+        _disposable = _enterTrigger.OnPointerEnterAsObservable().Subscribe(_ =>
         {
-            _image.raycastTarget = false;
-            action?.Invoke(_addActionPower);
-            SizeChangeAnim(Vector2.zero, () => Destroy(gameObject));
+            _disposable.Dispose();
+            pointerEnterEvent?.Invoke();
+            SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () => Destroy());
         }).AddTo(this);
+
+        _timeOutEvent = timeOutEvent;
     }
-    void SizeChangeAnim(Vector2 size, System.Action action)
+    void SizeChangeAnim(Vector2 size, float speed, System.Action action)
     {
-        _thisTransform.DOScale(size, _sizeChangeSpeed)
+        _thisTransform.DOScale(size, speed)
             .SetEase(_ease)
             .OnComplete(() =>
             {
@@ -47,24 +54,40 @@ public class AttackAction : MonoBehaviour, IObjectPool
             });
     }
 
-    public void Create(Vector2 orizin, Vector2 dir)
+    public void Setup(Vector2 orizin, Vector2 dir)
     {
         _thisTransform.transform.position = orizin;
-        _thisTransform.DOMove(dir, _moveSpeed);
+        _vec = dir;
+    }
+
+    private void Update()
+    {
+        if(_timer.RunTimer())
+        {
+            SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () =>
+            {
+                _disposable.Dispose();
+                _timeOutEvent?.Invoke();
+                Destroy();
+            });
+        }
+
+        _thisTransform.Translate(_vec * _moveSpeed * Time.deltaTime);
     }
 
     public void DisactiveForInstantiate()
     {
-        throw new System.NotImplementedException();
+        _isActive = false;
     }
 
     public void Create()
     {
-        throw new System.NotImplementedException();
+        _isActive = true;
+        SizeChangeAnim(Vector2.one, _sizeChangeSpeed, null);
     }
 
     public void Destroy()
     {
-        throw new System.NotImplementedException();
+        _isActive = false;
     }
 }

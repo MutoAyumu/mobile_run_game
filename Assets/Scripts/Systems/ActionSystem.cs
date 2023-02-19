@@ -8,14 +8,16 @@ public class ActionSystem
 {
     #region 変数
     ActionData _currentData;
-    bool _isCompleted;
+    bool _isCompleted = true;
     Subject<Unit> _actionSub = new Subject<Unit>();
+    Subject<Unit> _isCompletedSub = new Subject<Unit>();
     #endregion
 
     #region プロパティ
     public static ActionSystem Instance => new ActionSystem();
-    public bool IsCompleted => _isCompleted;
+    public IObservable<Unit> IsCompleted => _isCompletedSub;
     public IObservable<Unit> Action => _actionSub;
+    public int SuccessCount => _currentData.State.SuccessCount;
     #endregion
 
     public ActionSystem() { }
@@ -27,6 +29,12 @@ public class ActionSystem
             {
                 Update();
             }).AddTo(player);
+    }
+
+    public void OnStart(ActionData data)
+    {
+        _currentData = data;
+        _currentData.State.Enter();
     }
 
     public void ChangeActionData(ActionData data)
@@ -46,6 +54,12 @@ public class ActionSystem
     {
         if (_isCompleted) return;
 
-        _isCompleted = _currentData.ActionUpdate();
+        var com = _currentData.ActionUpdate();
+
+        if(com != _isCompleted)
+        {
+            _isCompleted = true;
+            _isCompletedSub.OnNext(Unit.Default);
+        }
     }
 }
