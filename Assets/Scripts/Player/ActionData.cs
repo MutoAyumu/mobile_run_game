@@ -9,9 +9,4 @@ public class ActionData : ScriptableObject
     [SerializeReference, SubclassSelector] IAction _state;
 
     public IAction State => _state;
-
-    public bool ActionUpdate()
-    {
-        return _state.Update();
-    }
 }

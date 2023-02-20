@@ -35,7 +35,6 @@ public class PlayerAction : MonoBehaviour
     {
         InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(this);
         InputSystemManager.Instance.ActionSub.Subscribe(_ => OnStart()).AddTo(this);
-        ActionSystem.Instance.Init(this);
         ActionSystem.Instance.IsCompleted.Subscribe(_ =>
         { 
             OnAttack();
@@ -59,9 +58,9 @@ public class PlayerAction : MonoBehaviour
         {
             _isCompleted = false;
             _tapCount -= 10;
+            ActionSystem.Instance.StartAction(this);
             CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
             CameraManager.Instance.ChangeTimeScale(TimeScaleType.SlowTime);
-            ActionSystem.Instance.StartAction(this);
         }
     }
 

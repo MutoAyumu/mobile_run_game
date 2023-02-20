@@ -31,7 +31,6 @@ public class FieldManager
     public void Init(FieldManagerAttachment attachment)
     {
         _gameTime.Value = attachment.GameTime;
-
         Observable.EveryUpdate()
             .Subscribe(_ =>
             {

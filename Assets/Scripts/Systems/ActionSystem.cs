@@ -22,13 +22,13 @@ public class ActionSystem
 
     public ActionSystem() { }
 
-    public void Init(PlayerAction player)
+    public void Init(ActionSystemAttachment attachment)
     {
         Observable.EveryUpdate()
             .Subscribe(_ =>
             {
                 Update();
-            }).AddTo(player);
+            }).AddTo(attachment);
     }
 
     public void OnStart(ActionData data)
@@ -46,17 +46,20 @@ public class ActionSystem
 
     public void StartAction(PlayerAction player)
     {
-        _actionSub.OnNext(Unit.Default);
         _isCompleted = false;
+        _actionSub.OnNext(Unit.Default);
     }
 
     void Update()
     {
+        Debug.Log(_isCompleted);
         if (_isCompleted) return;
 
-        var com = _currentData.ActionUpdate();
+        Debug.Log("Update");
 
-        if(com != _isCompleted)
+        var com = _currentData.State.Update();
+
+        if (com == true)
         {
             _isCompleted = true;
             _isCompletedSub.OnNext(Unit.Default);
