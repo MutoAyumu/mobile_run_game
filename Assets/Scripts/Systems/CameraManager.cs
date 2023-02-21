@@ -43,7 +43,8 @@ public class CameraManager
             to = MIN_TIME_SCALE;
         }
 
-        DOVirtual.Float(Time.timeScale, to, _duration, value => Time.timeScale = value);
+        DOVirtual.Float(Time.timeScale, to, _duration, value => Time.timeScale = value)
+            .SetUpdate(true);
     }
 }
 public enum VCameraType

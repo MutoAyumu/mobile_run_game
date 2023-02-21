@@ -4,18 +4,23 @@ using UnityEngine;
 
 public class CircleAction : IAction
 {
-    [SerializeField] float _interval = 0.5f;
-    [SerializeField] float _length = 0.2f;
-    [SerializeField] int _lapNum = 6;
-    [SerializeField] Vector2 _viewPort = new Vector2(0.5f, 0.5f);
+    [Header("Settings")]
+    [SerializeField] float _generateInterval = 0.5f;
+    [SerializeField] float _length = 200f;
+    [SerializeField] int _countGeneratedInOnce = 9;
+    [SerializeField] Vector2[] _viewPortPositions = new Vector2[1] { new Vector2(0.5f, 0.5f) };
+    [Header("ActionPrefab")]
     [SerializeField] AttackAction _prefab;
+    [SerializeField] float _destroyTime = 2.5f;
+    [SerializeField] float _moveTime = 1f;
 
-    float _rad;
     float _radDiff;
+    float _rad;
+    int _repeatedCount;
     int _failureCount;
     int _successCount;
     int _createCount;
-    Vector2 _origin;
+    Vector2[] _origins;
     Camera _cam;
     UnscaledTimer _timer = new UnscaledTimer();
     GenericObjectPool<AttackAction> _pool = new GenericObjectPool<AttackAction>();
@@ -31,35 +36,40 @@ public class CircleAction : IAction
 
     public void Init()
     {
-        _cam = Camera.main;
-        _origin = _cam.ViewportToScreenPoint(_viewPort);
-        _radDiff = RAGIAN / _lapNum;
-
-        var root = GameObject.FindGameObjectWithTag(IAction.ACTION_PARENT_TAG).transform;
-        _pool.SetBaseObj(_prefab, root);
-        _pool.SetCapacity(IAction.Limit);
+        _successCount = 0;
+        _failureCount = 0;
+        _createCount = 0;
+        _rad = 0;
+        _repeatedCount = 0;
     }
 
     public void Enter()
     {
-        Init();
-        _timer.Setup(_interval);
+        _timer.Setup(_generateInterval);
+        Setup();
     }
 
     public void Exit()
     {
-        
+
     }
 
     public bool Update()
     {
-        if (_createCount < _lapNum)
+        if (_repeatedCount < _viewPortPositions.Length)
         {
+
             if (_timer.RunTimer())
             {
                 var obj = _pool.Instantiate();
                 Create(obj);
                 _createCount++;
+
+                if (_createCount >= _countGeneratedInOnce)
+                {
+                    _createCount = 0;
+                    _repeatedCount++;
+                }
             }
         }
 
@@ -68,25 +78,39 @@ public class CircleAction : IAction
         return false;
     }
 
+    void Setup()
+    {
+        _cam = Camera.main;
+        _origins = new Vector2[_viewPortPositions.Length];
+
+        for (int i = 0; i < _viewPortPositions.Length; i++)
+        {
+            _origins[i] = _cam.ViewportToScreenPoint(_viewPortPositions[i]);
+        }
+
+        _radDiff = RAGIAN / _countGeneratedInOnce;
+
+        var root = GameObject.FindGameObjectWithTag(IAction.ACTION_PARENT_TAG).transform;
+        _pool.SetBaseObj(_prefab, root);
+        _pool.SetCapacity(IAction.Limit);
+    }
+
     bool EndDecision()
     {
         var n = _successCount + _failureCount;
 
-        if (n >= _lapNum) return true;
+        if (n >= _countGeneratedInOnce * _viewPortPositions.Length) return true;
 
         return false;
     }
-    
+
     void Create(AttackAction action)
     {
-        var setPos = Vector2.zero;
-        setPos.x = _origin.x + _length * Mathf.Cos(_rad);
-        setPos.y = _origin.y + _length * Mathf.Sin(_rad);
+        var rad = _rad * Mathf.Deg2Rad;
+        var dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
 
-        var dir = setPos - _origin;
-        action.Setup(_origin, dir);
+        action.Setup(_origins[_repeatedCount], dir * _length, _destroyTime, _moveTime);
         action.Init(() => _successCount++, () => _failureCount++);
-
         _rad += _radDiff;
     }
 }

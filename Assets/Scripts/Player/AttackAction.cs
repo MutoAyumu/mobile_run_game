@@ -11,16 +11,14 @@ using System;
 public class AttackAction : MonoBehaviour, IObjectPool
 {
     [SerializeField] float _sizeChangeSpeed = 1f;
-    [SerializeField] float _moveSpeed = 1f;
-    [SerializeField] float _destroyTime = 2.5f;
     [SerializeField] Ease _ease = Ease.Linear;
 
     ObservablePointerEnterTrigger _enterTrigger;
     IDisposable _disposable;
-    Transform _thisTransform;
-    Vector2 _vec;
-    UnscaledTimer _timer = new UnscaledTimer();
+    RectTransform _thisTransform;
+    Tweener _moveTween;
     bool _isActive;
+    float _destroyTime;
     Action _timeOutEvent;
 
     public bool IsActive => _isActive;
@@ -30,8 +28,7 @@ public class AttackAction : MonoBehaviour, IObjectPool
         TryGetComponent(out _enterTrigger);
         TryGetComponent(out _thisTransform);
 
-        SizeChangeAnim(Vector2.zero, 0 ,null);
-        _timer.Setup(_destroyTime);
+        SizeChangeAnim(Vector2.zero, 0, null);
     }
     public void Init(Action pointerEnterEvent, Action timeOutEvent)
     {
@@ -39,6 +36,7 @@ public class AttackAction : MonoBehaviour, IObjectPool
         {
             _disposable.Dispose();
             pointerEnterEvent?.Invoke();
+            _moveTween.Kill();
             SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () => Destroy());
         }).AddTo(this);
 
@@ -48,31 +46,31 @@ public class AttackAction : MonoBehaviour, IObjectPool
     {
         _thisTransform.DOScale(size, speed)
             .SetEase(_ease)
+            .SetUpdate(true)
             .OnComplete(() =>
             {
                 action?.Invoke();
             });
     }
 
-    public void Setup(Vector2 orizin, Vector2 dir)
+    public void Setup(Vector2 orizin, Vector2 dir, float destroyTime, float moveSpeed)
     {
         _thisTransform.transform.position = orizin;
-        _vec = dir;
-    }
+        _destroyTime = destroyTime;
 
-    private void Update()
-    {
-        if(_timer.RunTimer())
-        {
-            SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () =>
+        _moveTween = _thisTransform.DOAnchorPos(dir, moveSpeed)
+            .SetUpdate(true)
+            .SetEase(_ease)
+            .SetRelative(true)
+            .OnComplete(() =>
             {
-                _disposable.Dispose();
-                _timeOutEvent?.Invoke();
-                Destroy();
+                SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () =>
+                {
+                    _disposable.Dispose();
+                    _timeOutEvent?.Invoke();
+                    Destroy();
+                });
             });
-        }
-
-        _thisTransform.Translate(_vec * _moveSpeed * Time.deltaTime);
     }
 
     public void DisactiveForInstantiate()

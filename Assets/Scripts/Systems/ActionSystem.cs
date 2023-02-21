@@ -11,16 +11,21 @@ public class ActionSystem
     bool _isCompleted = true;
     Subject<Unit> _actionSub = new Subject<Unit>();
     Subject<Unit> _isCompletedSub = new Subject<Unit>();
+    
+    readonly static ActionSystem _instance = new ActionSystem();
     #endregion
 
     #region プロパティ
-    public static ActionSystem Instance => new ActionSystem();
+    public static ActionSystem Instance => _instance;
     public IObservable<Unit> IsCompleted => _isCompletedSub;
     public IObservable<Unit> Action => _actionSub;
     public int SuccessCount => _currentData.State.SuccessCount;
     #endregion
 
-    public ActionSystem() { }
+    public ActionSystem() 
+    {
+        Debug.Log("New ActionSystem");
+    }
 
     public void Init(ActionSystemAttachment attachment)
     {
@@ -29,6 +34,8 @@ public class ActionSystem
             {
                 Update();
             }).AddTo(attachment);
+
+        _isCompleted = true;
     }
 
     public void OnStart(ActionData data)
@@ -48,11 +55,11 @@ public class ActionSystem
     {
         _isCompleted = false;
         _actionSub.OnNext(Unit.Default);
+        _currentData.State.Init();
     }
 
     void Update()
     {
-        Debug.Log(_isCompleted);
         if (_isCompleted) return;
 
         Debug.Log("Update");

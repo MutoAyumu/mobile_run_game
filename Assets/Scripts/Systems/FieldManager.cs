@@ -14,6 +14,7 @@ public class FieldManager
 
     readonly GameInputs _inputs = new GameInputs();
     readonly Subject<Unit> _pauseSubject = new Subject<Unit>();
+    readonly static FieldManager _instance = new FieldManager();
     #endregion
     #region　プロパティ
     public IReadOnlyReactiveProperty<float> GameTime => _gameTime;
@@ -21,11 +22,13 @@ public class FieldManager
     public IObservable<Unit> OnPauseSub => _pauseSubject;
     #endregion
 
-    public static FieldManager Instance = new FieldManager();
+    public static FieldManager Instance = _instance;
     private FieldManager()
     {
         _inputs.Player.PauseResume.started += OnPause;
         _inputs.Enable();
+
+        Debug.Log("New FieldManager");
     }
 
     public void Init(FieldManagerAttachment attachment)
