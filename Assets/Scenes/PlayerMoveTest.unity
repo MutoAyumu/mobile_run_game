@@ -1721,6 +1721,8 @@ GameObject:
   - component: {fileID: 1503438541}
   - component: {fileID: 1503438544}
   - component: {fileID: 1503438545}
+  - component: {fileID: 1503438547}
+  - component: {fileID: 1503438546}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1841,6 +1843,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _touchEffect: {fileID: 1124558377}
+--- !u!114 &1503438546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1503438540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf0765d14a7e334686b60874f8a4b62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curveStrength: 0.01
+--- !u!114 &1503438547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1503438540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc3aa854934ea8438e77447477df189, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1590926338
 GameObject:
   m_ObjectHideFlags: 3
@@ -5905,7 +5932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3265899264626236163, guid: e8d6e2ca28a82ce42ada790fb816ebd0, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3265899264626236175, guid: e8d6e2ca28a82ce42ada790fb816ebd0, type: 3}
       propertyPath: m_RootOrder
