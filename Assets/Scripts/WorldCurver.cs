@@ -4,17 +4,22 @@ using UnityEngine;
 public class WorldCurver : MonoBehaviour
 {
 	[Range(-0.1f, 0.1f)]
-	public float curveStrength = 0.01f;
+	[SerializeField] float curveStrengthY = 0.01f;
+	[Range(-0.1f, 0.1f)]
+	[SerializeField] float curveStrengthX = 0.00f;
 
-	int m_CurveStrengthID;
+	int _CurveStrengthY;
+	int _CurveStrengthX;
 
 	private void OnEnable()
 	{
-		m_CurveStrengthID = Shader.PropertyToID("_CurveStrength");
+		_CurveStrengthY = Shader.PropertyToID("_CurveStrengthY");
+		_CurveStrengthX = Shader.PropertyToID("_CurveStrengthX");
 	}
 
 	void Update()
 	{
-		Shader.SetGlobalFloat(m_CurveStrengthID, curveStrength);
+		Shader.SetGlobalFloat(_CurveStrengthY, curveStrengthY);
+		Shader.SetGlobalFloat(_CurveStrengthX, curveStrengthX);
 	}
 }
