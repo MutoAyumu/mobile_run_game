@@ -76,9 +76,9 @@ public class EnemyAttackState : IState
     void OnAttack()
     {
         var r = Random.Range(0, _setPositions.Length);
-        var obj = _generator.OnCreate();
-        obj.position = _setPositions[r].position;
-        obj.SetParent(CheckParent());
+        //var obj = _generator.OnCreate();
+        //obj.position = _setPositions[r].position;
+        //obj.SetParent(CheckParent());
     }
     Transform CheckParent()
     {

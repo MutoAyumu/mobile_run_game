@@ -19,3 +19,7 @@ MonoBehaviour:
   - {fileID: 4252542122211949078, guid: 551f93bc3e863c1419cd6258359093b3, type: 3}
   - {fileID: 4252542122211949078, guid: 551f93bc3e863c1419cd6258359093b3, type: 3}
   _mapWidth: 10
+  _obstacleDataArray: []
+  references:
+    version: 2
+    RefIds: []

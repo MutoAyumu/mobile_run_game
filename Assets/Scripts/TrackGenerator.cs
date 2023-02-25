@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrackCreater : MonoBehaviour
+public class TrackGenerator : MonoBehaviour
 {
     [SerializeField] TrackData _data;
 
