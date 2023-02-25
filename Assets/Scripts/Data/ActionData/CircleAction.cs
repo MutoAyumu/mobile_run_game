@@ -31,7 +31,7 @@ public class CircleAction : IAction
 
     public CircleAction()
     {
-        Debug.Log("CircleAction");
+        Debug.Log(typeof(Spike));
     }
 
     public void Init()
