@@ -1287,15 +1287,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1176837330}
-  m_LocalRotation: {x: 0.08715578, y: 0, z: 0, w: 0.9961947}
-  m_LocalPosition: {x: -0.02, y: 2.4352965, z: -1.9696153}
+  m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
+  m_LocalPosition: {x: -0.02, y: 2.4640603, z: -2.8190777}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1590926339}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 10, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &1211903048
 GameObject:
   m_ObjectHideFlags: 3
@@ -1792,7 +1792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ad980451443d70438faac0bc6c235a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 1.25, z: 0}
+  m_TrackedObjectOffset: {x: 0, y: 0.6, z: 0}
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
@@ -1802,7 +1802,7 @@ MonoBehaviour:
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
   m_ScreenY: 0.5
-  m_CameraDistance: 2
+  m_CameraDistance: 3
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0
@@ -4766,6 +4766,14 @@ PrefabInstance:
     - target: {fileID: 471675277132860741, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_Name
       value: PlayerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _verticalMoveSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _horizontalMoveSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 990909045074745343, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_RootOrder

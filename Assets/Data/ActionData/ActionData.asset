@@ -25,6 +25,8 @@ MonoBehaviour:
         _countGeneratedInOnce: 9
         _viewPortPositions:
         - {x: 0.5, y: 0.5}
+        - {x: 0.7, y: 0.6}
+        - {x: 0.3, y: 0.7}
         _prefab: {fileID: 818301725750509857, guid: 41d054fa2c6c0a940962cf50db9b52d5, type: 3}
         _destroyTime: 2.5
         _moveTime: 1

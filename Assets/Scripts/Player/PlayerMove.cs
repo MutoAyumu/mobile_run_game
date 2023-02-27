@@ -5,11 +5,12 @@ public class PlayerMove : MonoBehaviour
 {
     #region 変数
     [Header("Parameter")]
-    [SerializeField] float _moveSpeed = 1;
+    [SerializeField] float _horizontalMoveSpeed = 1;
+    [SerializeField] float _verticalMoveSpeed = 3;
 
     Rigidbody _rb;
     Vector2 _dir;
-    float _currentSpeed;
+    float _currentVerticalMoveSpeed;
     #endregion
 
     #region プロパティ
@@ -24,11 +25,11 @@ public class PlayerMove : MonoBehaviour
     {
         TryGetComponent(out _rb);
 
-        _currentSpeed = _moveSpeed;
+        _currentVerticalMoveSpeed = _horizontalMoveSpeed;
 
         InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(this);
     }
-    
+
     void OnSetDirection(Vector2 vec)
     {
         _dir = vec;
@@ -36,11 +37,10 @@ public class PlayerMove : MonoBehaviour
 
     public void OnMove()
     {
-        if (_dir != Vector2.zero)
-        {
-            var vel = new Vector3(_dir.x, 0, 0).normalized * _currentSpeed;
-            vel.y = _rb.velocity.y;
-            _rb.velocity = vel;
-        }
+        var vel = new Vector3(_dir.x, 0, 1).normalized;
+        vel.x *= _horizontalMoveSpeed;
+        vel.y = _rb.velocity.y;
+        vel.z = _currentVerticalMoveSpeed;
+        _rb.velocity = vel;
     }
 }
