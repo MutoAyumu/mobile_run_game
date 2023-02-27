@@ -11,8 +11,6 @@ public class Obstacle : ArrangementObject
 
     float _currentHealth;
     bool _isIntrusion;
-    MeshRenderer _mesh;
-    Collider _collider;
     Transform _thisTransform;
     LayerMask _playerLayer;
     DamageObject _damageObject;
@@ -21,8 +19,6 @@ public class Obstacle : ArrangementObject
 
     private void Awake()
     {
-        TryGetComponent(out _mesh);
-        TryGetComponent(out _collider);
         TryGetComponent(out _thisTransform);
 
         _playerLayer = LayerMask.GetMask(PLAYER_LAYER);
@@ -31,6 +27,9 @@ public class Obstacle : ArrangementObject
     public void Init(DamageObject damage)
     {
         _damageObject = damage;
+
+        var pos = _thisTransform.position;
+        _damageObject.transform.position = pos;
     }
 
     public void TakeDamage(float damage)
@@ -69,8 +68,6 @@ public class Obstacle : ArrangementObject
     public override void Create()
     {
         base.Create();
-        _mesh.enabled = IsActive;
-        _collider.enabled = IsActive;
         _currentHealth = _health;
         _isIntrusion = false;
     }
@@ -78,16 +75,12 @@ public class Obstacle : ArrangementObject
     public override void Destroy()
     {
         base.Destroy();
-        _mesh.enabled = IsActive;
-        _collider.enabled = IsActive;
         _damageObject = null;
     }
 
     public override void DisactiveForInstantiate()
     {
         base.DisactiveForInstantiate();
-        _mesh.enabled = IsActive;
-        _collider.enabled = IsActive;
     }
     private void OnDrawGizmosSelected()
     {

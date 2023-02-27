@@ -9,6 +9,7 @@ public class TrackData : ScriptableObject
     [SerializeField] int _mapWidth = 14;
     [SerializeReference, SubclassSelector] IDamageObject[] _obstacleDataArray;
 
+    public IDamageObject[] ObstacleDataArray => _obstacleDataArray;
     public TrackSegment[] Senments => _segments;
     public int MapWidth => _mapWidth;
 }

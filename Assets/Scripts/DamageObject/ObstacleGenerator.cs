@@ -17,16 +17,48 @@ public class ObstacleGenerator : MonoBehaviour
     [SerializeField] string _damageObjectRootName = "DamageObjectRoot";
     [SerializeField] Transform _damageObjectParent;
     GenericObjectPool<DamageObject> _damageObjectPool = new GenericObjectPool<DamageObject>();
+
+    int _currentDataIndex;
+    int _createCount;
+    float _spacing;
+    Vector3[] _generationPosition;
+    IDamageObject[] _obstacleDatas;
+    IDamageObject _currentObstacleData;
     #endregion
 
     #region プロパティ
 
     #endregion
 
+    public void SetTrackData(TrackData data)
+    {
+        _obstacleDatas = data.ObstacleDataArray;
+        _currentObstacleData = _obstacleDatas[_currentDataIndex];
+
+        _spacing += _currentObstacleData.SpacingFromPrevData;
+
+        foreach(var d in _obstacleDatas)
+        {
+            d.Init();
+        }
+    }
+    public void SetPositionData(Vector3[] positions)
+    {
+        _generationPosition = positions;
+    }
+
     private void Start()
     {
         SetPool(_obstacleRootName, _obstacleParent, _obstaclPool, _obstaclePrefab, _obstacleCreateLimit);
         SetPool(_damageObjectRootName, _damageObjectParent, _damageObjectPool, _damageObjectPrefab, _damageObjectCreateLimit);
+
+        for(int i = 0; i < _obstacleDatas.Length; i++)
+        {
+            for(int j = 0; j < _obstacleDatas[i].Positions.Length; j++)
+            {
+                OnObstacleCreate();
+            }
+        }
     }
 
     void SetPool<T>(string rootName, Transform parent, GenericObjectPool<T> pool, IObjectPool prefab, int limit)
@@ -42,10 +74,48 @@ public class ObstacleGenerator : MonoBehaviour
         pool.SetBaseObj((T)prefab, root);
         pool.SetCapacity(limit);
     }
-    public void OnObstacleCreate()
+    void OnObstacleCreate()
     {
         var obs = _obstaclPool.Instantiate();
         var dmo = _damageObjectPool.Instantiate();
+
+        dmo.SetData(_obstacleDatas[_currentDataIndex]);
+        SetPosition(obs, _currentObstacleData.Positions[_createCount]);
         obs.Init(dmo);
+
+        _createCount++;
+
+        if (_createCount >= _currentObstacleData.CreateCount)
+        {
+            if (_currentDataIndex + 1 < _obstacleDatas.Length)
+            {
+                _currentDataIndex++;
+                _createCount = 0;
+                _currentObstacleData = _obstacleDatas[_currentDataIndex];
+                _spacing += _currentObstacleData.SpacingFromPrevData;
+            }
+        }
+    }
+
+    void SetPosition(Obstacle obj, GenerationPosition pos)
+    {
+        var p = Vector3.zero;
+
+        switch(pos)
+        {
+            case GenerationPosition.Right:
+                p = _generationPosition[0];
+                break;
+            case GenerationPosition.Center:
+                p = _generationPosition[1];
+                break;
+            case GenerationPosition.Left:
+                p = _generationPosition[2];
+                break;
+        }
+
+        p.z = _spacing;
+        obj.transform.position = p;
+        _spacing += _currentObstacleData.Spacing;
     }
 }

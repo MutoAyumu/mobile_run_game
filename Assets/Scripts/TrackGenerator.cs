@@ -5,6 +5,8 @@ using UnityEngine;
 public class TrackGenerator : MonoBehaviour
 {
     [SerializeField] TrackData _data;
+    [SerializeField] ObstacleGenerator _obstacleGenerator;
+    [SerializeField, ElementNames(new string[] { "Right", "Center", "Left"})] Vector3[] _positions = new Vector3[3];
 
     TrackSegment[] _segments;
     int _width;
@@ -16,6 +18,10 @@ public class TrackGenerator : MonoBehaviour
         _segments = _data.Senments;
         _width = _data.MapWidth;
         _trackArray = new TrackSegment[_data.Senments.Length];
+
+        var obs = Instantiate(_obstacleGenerator);
+        obs.SetTrackData(_data);
+        obs.SetPositionData(_positions);
     }
 
     private void Start()
