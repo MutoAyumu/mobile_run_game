@@ -13,6 +13,7 @@ public class Obstacle : ArrangementObject
     bool _isIntrusion;
     Transform _thisTransform;
     LayerMask _playerLayer;
+    IDamageObject _data;
     DamageObject _damageObject;
 
     const string PLAYER_LAYER = "Player";
@@ -26,10 +27,11 @@ public class Obstacle : ArrangementObject
 
     public void Init(DamageObject damage)
     {
+        var pos = _thisTransform.position;
+        damage.SetCenterPosition(pos);
         _damageObject = damage;
 
-        var pos = _thisTransform.position;
-        _damageObject.transform.position = pos;
+        _data = damage.Data;
     }
 
     public void TakeDamage(float damage)
@@ -54,6 +56,7 @@ public class Obstacle : ArrangementObject
         if(hit.Length > 0)
         {
             _isIntrusion = true;
+            _data.Action(_damageObject.transform);
             Debug.Log("Player‚ÆÚG‚µ‚½");
         }
     }
@@ -75,7 +78,7 @@ public class Obstacle : ArrangementObject
     public override void Destroy()
     {
         base.Destroy();
-        _damageObject = null;
+        _data = null;
     }
 
     public override void DisactiveForInstantiate()

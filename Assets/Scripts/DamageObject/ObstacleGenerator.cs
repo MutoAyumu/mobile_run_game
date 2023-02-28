@@ -54,7 +54,7 @@ public class ObstacleGenerator : MonoBehaviour
 
         for(int i = 0; i < _obstacleDatas.Length; i++)
         {
-            for(int j = 0; j < _obstacleDatas[i].Positions.Length; j++)
+            for(int j = 0; j < _obstacleDatas[i].GenerationPositionData.Length; j++)
             {
                 OnObstacleCreate();
             }
@@ -79,8 +79,8 @@ public class ObstacleGenerator : MonoBehaviour
         var obs = _obstaclPool.Instantiate();
         var dmo = _damageObjectPool.Instantiate();
 
-        dmo.SetData(_obstacleDatas[_currentDataIndex]);
-        SetPosition(obs, _currentObstacleData.Positions[_createCount]);
+        dmo.SetData(_obstacleDatas[_currentDataIndex], _createCount);
+        SetPosition(obs, _currentObstacleData.GenerationPositionData[_createCount].Position);
         obs.Init(dmo);
 
         _createCount++;

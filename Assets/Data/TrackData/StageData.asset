@@ -22,6 +22,7 @@ MonoBehaviour:
   _obstacleDataArray:
   - rid: 1232266182998360074
   - rid: 1232266157331841028
+  - rid: 1232266205913153536
   references:
     version: 2
     RefIds:
@@ -33,7 +34,13 @@ MonoBehaviour:
         _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
         _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
         _moveSpeed: 1
-        _positions: 000000000000000000000000020000000200000002000000010000000100000001000000
+        _positionsData:
+        - _position: 1
+          _beginVerticalPosition: 1
+        - _position: 1
+          _beginVerticalPosition: 2
+        - _position: 1
+          _beginVerticalPosition: 3
     - rid: 1232266182998360074
       type: {class: Spike, ns: , asm: Assembly-CSharp}
       data:
@@ -42,4 +49,25 @@ MonoBehaviour:
         _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
         _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
         _moveSpeed: 1
-        _positions: 000000000100000002000000
+        _positionsData:
+        - _position: 0
+          _beginVerticalPosition: 1
+        - _position: 0
+          _beginVerticalPosition: 2
+        - _position: 0
+          _beginVerticalPosition: 3
+    - rid: 1232266205913153536
+      type: {class: Spike, ns: , asm: Assembly-CSharp}
+      data:
+        _spacing: 5
+        _spacingFromPrevData: 20
+        _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+        _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
+        _moveSpeed: 1
+        _positionsData:
+        - _position: 2
+          _beginVerticalPosition: 1
+        - _position: 2
+          _beginVerticalPosition: 2
+        - _position: 2
+          _beginVerticalPosition: 3

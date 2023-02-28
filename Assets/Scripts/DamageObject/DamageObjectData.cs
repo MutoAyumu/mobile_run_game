@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public abstract class DamageObjectData : IDamageObject
 {
@@ -11,14 +12,14 @@ public abstract class DamageObjectData : IDamageObject
     [SerializeField] Material _material;
 
     protected int _createCount = 1;
-    GenerationPosition[] _positions;
+    GenerationPositionData[] _positionsData;
 
     public int CreateCount => _createCount;
     public float Spacing => _spacing;
     public float SpacingFromPrevData => _spacingFromPrevData;
     public Mesh Mesh => _mesh;
     public Material Material => _material;
-    public GenerationPosition[] Positions => _positions;
+    public GenerationPositionData[] GenerationPositionData => _positionsData;
 
     public DamageObjectData() { }
 
@@ -27,20 +28,32 @@ public abstract class DamageObjectData : IDamageObject
         _createCount = num;
     }
     
-    protected void SetPositionsData(GenerationPosition[] positions)
+    protected void SetPositionsData(GenerationPositionData[] datas)
     {
-        _positions = positions;
+        _positionsData = datas;
     }
 
     public abstract void Init();
-    public abstract void Action();
+    public abstract void Action(Transform t);
+}
+
+[System.Serializable]
+public class GenerationPositionData
+{
+    [SerializeField] GenerationPosition _position;
+    [SerializeField] float _beginVerticalPosition = 1;
+
+    public GenerationPosition Position => _position;
+    public float VerticalPosition => _beginVerticalPosition;
 }
 
 public class Spike : DamageObjectData
 {
     [Header("Spike")]
     [SerializeField] float _moveSpeed = 1f;
-    [SerializeField] GenerationPosition[] _positions = new GenerationPosition[1];
+    [SerializeField] Ease _ease;
+    [SerializeField] float _moveValue = 1f;
+    [SerializeField] GenerationPositionData[] _positionsData = new GenerationPositionData[1];
 
     public Spike()
     {
@@ -49,20 +62,22 @@ public class Spike : DamageObjectData
 
     public override void Init()
     {
-        SetCreateCountData(_positions.Length);
-        SetPositionsData(_positions);
+        SetCreateCountData(_positionsData.Length);
+        SetPositionsData(_positionsData);
     }
 
-    public override void Action()
+    public override void Action(Transform t)
     {
-        throw new System.NotImplementedException();
+        var endValue = t.position.y + _moveValue;
+        t.DOMoveY(endValue, _moveSpeed)
+            .SetEase(_ease);
     }
 }
 public class Bullet : DamageObjectData
 {
     [Header("Bullet")]
     [SerializeField] float _moveSpeed = 1f;
-    [SerializeField] GenerationPosition[] _positions = new GenerationPosition[1];
+    [SerializeField] GenerationPositionData[] _positionsData = new GenerationPositionData[1];
 
     public Bullet()
     {
@@ -71,11 +86,11 @@ public class Bullet : DamageObjectData
 
     public override void Init()
     {
-        SetCreateCountData(_positions.Length);
-        SetPositionsData(_positions);
+        SetCreateCountData(_positionsData.Length);
+        SetPositionsData(_positionsData);
     }
 
-    public override void Action()
+    public override void Action(Transform t)
     {
         throw new System.NotImplementedException();
     }
