@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System;
 
 public abstract class DamageObjectData : IDamageObject
 {
@@ -10,6 +11,8 @@ public abstract class DamageObjectData : IDamageObject
     [SerializeField] float _spacingFromPrevData = 20f;
     [SerializeField] Mesh _mesh;
     [SerializeField] Material _material;
+    [SerializeField] Vector3 _modelRotation;
+    [SerializeField] float _dissolveSpeed = 0.5f;
 
     protected int _createCount = 1;
     GenerationPositionData[] _positionsData;
@@ -19,22 +22,34 @@ public abstract class DamageObjectData : IDamageObject
     public float SpacingFromPrevData => _spacingFromPrevData;
     public Mesh Mesh => _mesh;
     public Material Material => _material;
+    public Vector3 Rotation => _modelRotation;
     public GenerationPositionData[] GenerationPositionData => _positionsData;
 
     public DamageObjectData() { }
+
+    const string DISSOLVE_PARAM = "_Cutoff";
 
     protected void SetCreateCountData(int num)
     {
         _createCount = num;
     }
-    
+
     protected void SetPositionsData(GenerationPositionData[] datas)
     {
         _positionsData = datas;
     }
 
+    protected void DissolveFade(Tween tween, MeshRenderer renderer)
+    {
+        DOVirtual.Float(1, 0, _dissolveSpeed, value => renderer.materials[0].SetFloat(DISSOLVE_PARAM, value))
+            .OnComplete(() =>
+            {
+                tween.Play();
+            });
+    }
+
     public abstract void Init();
-    public abstract void Action(Transform t);
+    public abstract void Action(Transform t, MeshRenderer renderer);
 }
 
 [System.Serializable]
@@ -66,11 +81,13 @@ public class Spike : DamageObjectData
         SetPositionsData(_positionsData);
     }
 
-    public override void Action(Transform t)
+    public override void Action(Transform t, MeshRenderer renderer)
     {
         var endValue = t.position.y + _moveValue;
-        t.DOMoveY(endValue, _moveSpeed)
+        var tween = t.DOMoveY(endValue, _moveSpeed)
             .SetEase(_ease);
+
+        DissolveFade(tween, renderer);
     }
 }
 public class Bullet : DamageObjectData
@@ -90,7 +107,7 @@ public class Bullet : DamageObjectData
         SetPositionsData(_positionsData);
     }
 
-    public override void Action(Transform t)
+    public override void Action(Transform t, MeshRenderer renderer)
     {
         throw new System.NotImplementedException();
     }

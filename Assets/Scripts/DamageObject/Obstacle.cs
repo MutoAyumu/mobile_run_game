@@ -56,7 +56,7 @@ public class Obstacle : ArrangementObject
         if(hit.Length > 0)
         {
             _isIntrusion = true;
-            _data.Action(_damageObject.transform);
+            _data.Action(_damageObject.transform, _damageObject.MeshRenderer);
             Debug.Log("Player‚ÆÚG‚µ‚½");
         }
     }

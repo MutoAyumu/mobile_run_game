@@ -31,43 +31,55 @@ MonoBehaviour:
       data:
         _spacing: 3
         _spacingFromPrevData: 20
-        _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-        _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
+        _mesh: {fileID: 4300000, guid: 1a5dcf5c28e4b4049941bd2c8cb7b878, type: 3}
+        _material: {fileID: 2100000, guid: 3e7101ee60b046b418bc7a05d385162b, type: 2}
+        _modelRotation: {x: -90, y: 0, z: 0}
+        _dissolveSpeed: 2
         _moveSpeed: 1
+        _ease: 0
+        _moveValue: 1
         _positionsData:
         - _position: 1
-          _beginVerticalPosition: 1
+          _beginVerticalPosition: 0
         - _position: 1
-          _beginVerticalPosition: 2
+          _beginVerticalPosition: 0
         - _position: 1
-          _beginVerticalPosition: 3
+          _beginVerticalPosition: 0
     - rid: 1232266182998360074
       type: {class: Spike, ns: , asm: Assembly-CSharp}
       data:
-        _spacing: 1
+        _spacing: 4
         _spacingFromPrevData: 20
-        _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-        _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
+        _mesh: {fileID: 4300000, guid: 1a5dcf5c28e4b4049941bd2c8cb7b878, type: 3}
+        _material: {fileID: 2100000, guid: 3e7101ee60b046b418bc7a05d385162b, type: 2}
+        _modelRotation: {x: -90, y: 0, z: 0}
+        _dissolveSpeed: 2
         _moveSpeed: 1
+        _ease: 2
+        _moveValue: 1
         _positionsData:
         - _position: 0
-          _beginVerticalPosition: 1
+          _beginVerticalPosition: 0
         - _position: 0
-          _beginVerticalPosition: 2
+          _beginVerticalPosition: 0
         - _position: 0
-          _beginVerticalPosition: 3
+          _beginVerticalPosition: 0
     - rid: 1232266205913153536
       type: {class: Spike, ns: , asm: Assembly-CSharp}
       data:
         _spacing: 5
         _spacingFromPrevData: 20
-        _mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-        _material: {fileID: 2100000, guid: 3834397e2db4cf44990d7cc936cc0aef, type: 2}
+        _mesh: {fileID: 4300000, guid: 1a5dcf5c28e4b4049941bd2c8cb7b878, type: 3}
+        _material: {fileID: 2100000, guid: 3e7101ee60b046b418bc7a05d385162b, type: 2}
+        _modelRotation: {x: -90, y: 0, z: 0}
+        _dissolveSpeed: 2
         _moveSpeed: 1
+        _ease: 0
+        _moveValue: 1
         _positionsData:
         - _position: 2
-          _beginVerticalPosition: 1
+          _beginVerticalPosition: 0
         - _position: 2
-          _beginVerticalPosition: 2
+          _beginVerticalPosition: 0
         - _position: 2
-          _beginVerticalPosition: 3
+          _beginVerticalPosition: 0

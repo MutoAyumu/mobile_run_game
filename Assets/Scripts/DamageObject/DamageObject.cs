@@ -15,6 +15,8 @@ public class DamageObject : MonoBehaviour, IObjectPool
 
     public IDamageObject Data => _data;
 
+    public MeshRenderer MeshRenderer => _mesh;
+
     private void Awake()
     {
         TryGetComponent(out _mesh);
@@ -26,8 +28,17 @@ public class DamageObject : MonoBehaviour, IObjectPool
     {
         _data = data;
         _filter.mesh = data.Mesh;
-        _mesh.material = data.Material;
+        this.transform.rotation = Quaternion.Euler(data.Rotation);
         _verticalPosition = data.GenerationPositionData[index].VerticalPosition;
+        SetMaterial(data.Material);
+    }
+
+    void SetMaterial(Material material)
+    {
+        var mats = _mesh.materials;
+        mats[1] = material;
+
+        _mesh.materials = mats;
     }
 
     public void SetCenterPosition(Vector3 center)

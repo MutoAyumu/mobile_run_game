@@ -9,11 +9,12 @@ public interface IDamageObject
     public float SpacingFromPrevData { get; }
     public Mesh Mesh { get; }
     public Material Material { get; }
+    public Vector3 Rotation { get; }
     public GenerationPositionData[] GenerationPositionData { get; }
 
     public void Init();
 
-    public void Action(Transform t);
+    public void Action(Transform t, MeshRenderer renderer);
 }
 
 public enum GenerationPosition
