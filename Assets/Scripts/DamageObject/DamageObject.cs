@@ -9,7 +9,7 @@ public class DamageObject : MonoBehaviour, IObjectPool
     float _verticalPosition;
     MeshRenderer _mesh;
     MeshFilter _filter;
-    Collider _collider;
+    MeshCollider _collider;
 
     public bool IsActive => _isActive;
 
@@ -28,6 +28,7 @@ public class DamageObject : MonoBehaviour, IObjectPool
     {
         _data = data;
         _filter.mesh = data.Mesh;
+        _collider.sharedMesh = data.Mesh;
         this.transform.rotation = Quaternion.Euler(data.Rotation);
         _verticalPosition = data.GenerationPositionData[index].VerticalPosition;
         SetMaterial(data.Material);

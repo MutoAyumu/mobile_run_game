@@ -6,6 +6,8 @@ using UniRx;
 public class SystemPresenter : MonoBehaviour
 {
     [SerializeField] MVPText _gameTimeText;
+    [SerializeField] MVPText _scoreText;
+    [SerializeField] string _format = "0000";
 
     private void Awake()
     {
@@ -13,7 +15,14 @@ public class SystemPresenter : MonoBehaviour
         {
             FieldManager.Instance.GameTime.Subscribe(x =>
             {
-                _gameTimeText.SetText($"GameTime : {x:00}");
+                _gameTimeText.SetText($"GameTime : {x.ToString(_format)}");
+            }).AddTo(this);
+        }
+        if(_scoreText)
+        {
+            FieldManager.Instance.Score.Subscribe(x =>
+            {
+                _scoreText.SetText($"Score : {x.ToString(_format)}");
             }).AddTo(this);
         }
     }

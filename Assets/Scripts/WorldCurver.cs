@@ -1,12 +1,12 @@
 using UnityEngine;
 
-[ExecuteInEditMode]
+[ExecuteAlways]
 public class WorldCurver : MonoBehaviour
 {
 	[Range(-0.1f, 0.1f)]
-	[SerializeField] float curveStrengthY = 0.01f;
+	[SerializeField] float _curveStrengthY = 0.01f;
 	[Range(-0.1f, 0.1f)]
-	[SerializeField] float curveStrengthX = 0.00f;
+	[SerializeField] float _curveStrengthX = 0.00f;
 
 	int _CurveStrengthY;
 	int _CurveStrengthX;
@@ -19,7 +19,12 @@ public class WorldCurver : MonoBehaviour
 
 	void Update()
 	{
-		Shader.SetGlobalFloat(_CurveStrengthY, curveStrengthY);
-		Shader.SetGlobalFloat(_CurveStrengthX, curveStrengthX);
+		Shader.SetGlobalFloat(_CurveStrengthY, _curveStrengthY);
+		Shader.SetGlobalFloat(_CurveStrengthX, _curveStrengthX);
 	}
+
+	public void SetCurve(float curve)
+    {
+		_curveStrengthX = curve;
+    }
 }
