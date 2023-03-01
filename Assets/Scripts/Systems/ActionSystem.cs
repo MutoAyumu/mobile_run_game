@@ -13,7 +13,7 @@ public class ActionSystem
     Subject<Unit> _actionSub = new Subject<Unit>();
     Subject<Unit> _isCompletedSub = new Subject<Unit>();
     ReactiveProperty<int> _tapCount = new ReactiveProperty<int>();
-    
+
     readonly static ActionSystem _instance = new ActionSystem();
     #endregion
 
@@ -23,6 +23,7 @@ public class ActionSystem
     public IObservable<Unit> Action => _actionSub;
     public IReadOnlyReactiveProperty<int> TapCount => _tapCount;
     public int SuccessCount => _currentData.State.SuccessCount;
+    public int RequiredTapCount => _currentData.State.RequiredTapCount;
     #endregion
 
     public ActionSystem() 
@@ -54,6 +55,7 @@ public class ActionSystem
         InputSystemManager.Instance.TouchState.Subscribe(TappedTouchState).AddTo(attachment);
 #endif
 
+        _tapCount.Value = 0;
         _isCompleted = true;
     }
 
