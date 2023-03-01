@@ -14,7 +14,7 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] float _power = 1f;
     [SerializeField] bool _isDebug;
 
-    int _tapCount = 10000;
+    float _tapCount = 10000;
     bool _isCompleted = true;
 
     Animator _anim;
@@ -33,7 +33,20 @@ public class PlayerAction : MonoBehaviour
 
     private void Awake()
     {
+#if UNITY_EDITOR
+        if (UnityEditor.EditorApplication.isRemoteConnected)
+        {
+            InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(this);
+        }
+        else
+        {
+            InputSystemManager.Instance.EditorTouchButton.Subscribe(_ => AddTapCount(0.5f)).AddTo(this);
+        }
+#endif
+#if UNITY_ANDROID
         InputSystemManager.Instance.TouchState.Subscribe(TapCount).AddTo(this);
+#endif
+
         InputSystemManager.Instance.ActionSub.Subscribe(_ => OnStart()).AddTo(this);
         ActionSystem.Instance.IsCompleted.Subscribe(_ =>
         { 
@@ -41,7 +54,12 @@ public class PlayerAction : MonoBehaviour
             _isCompleted = true;
         });
         ActionSystem.Instance.OnStart(_actionData);
-        
+
+        if(!_isDebug)
+        {
+            _tapCount = 0;
+        }
+
         SetAnimationTrigger();
     }
 
@@ -74,10 +92,13 @@ public class PlayerAction : MonoBehaviour
     {
         if (state.phase == UnityEngine.InputSystem.TouchPhase.Began)
         {
-            _tapCount++;
+            AddTapCount(1);
         }
     }
-
+    void AddTapCount(float add)
+    {
+        _tapCount += add;
+    }    
     void OnAttack()
     {
         var power = _power * ActionSystem.Instance.SuccessCount;

@@ -9,10 +9,26 @@ public class TouchEffectPlayer : MonoBehaviour
 {
     [SerializeField] Image _touchEffect;
 
+    bool _isActive;
+
     private void Awake()
     {
         _touchEffect.enabled = false;
+
+#if UNITY_EDITOR
+        if (UnityEditor.EditorApplication.isRemoteConnected)
+        {
+            InputSystemManager.Instance.TouchState.Subscribe(IsProgress).AddTo(this);
+        }
+        else
+        {
+            InputSystemManager.Instance.EditorTouchButton.Subscribe(_ => IsProgress()).AddTo(this);
+            InputSystemManager.Instance.EditorTouchPoint.Subscribe(IsEffectMove).AddTo(this);
+        }
+#endif
+#if UNITY_ANDROID
         InputSystemManager.Instance.TouchState.Subscribe(IsProgress).AddTo(this);
+#endif
     }
 
     void IsProgress(TouchState state)
@@ -30,5 +46,15 @@ public class TouchEffectPlayer : MonoBehaviour
         {
             _touchEffect.transform.position = state.position;
         }
+    }
+    void IsProgress()
+    {
+        _isActive = !_isActive;
+
+        _touchEffect.enabled = _isActive;
+    }
+    void IsEffectMove(Vector2 vec)
+    {
+        _touchEffect.transform.position = vec;
     }
 }

@@ -93,6 +93,24 @@ namespace UnityEngine.InputSystem
                     ""initialStateCheck"": true
                 },
                 {
+                    ""name"": ""EditorTouchButton"",
+                    ""type"": ""Value"",
+                    ""id"": ""3dd73d5b-ed67-4b66-8f9e-feb364e41b7a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""EditorTouchPoint"",
+                    ""type"": ""Value"",
+                    ""id"": ""aaf5c90e-4ce0-4cae-8a8b-4f7a909944bd"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
                     ""name"": ""Action"",
                     ""type"": ""Button"",
                     ""id"": ""d4b2de25-6d3b-4efc-98ec-056a0f587998"",
@@ -375,6 +393,28 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ccd43cf8-b07b-4f0a-a2b2-f2f2734192d4"",
+                    ""path"": ""<Mouse>/press"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EditorTouchButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""15607d5e-2d29-4d95-80f2-6135688972c7"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EditorTouchPoint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -980,6 +1020,8 @@ namespace UnityEngine.InputSystem
             m_Player_Gyro = m_Player.FindAction("Gyro", throwIfNotFound: true);
             m_Player_PauseResume = m_Player.FindAction("PauseResume", throwIfNotFound: true);
             m_Player_Touch = m_Player.FindAction("Touch", throwIfNotFound: true);
+            m_Player_EditorTouchButton = m_Player.FindAction("EditorTouchButton", throwIfNotFound: true);
+            m_Player_EditorTouchPoint = m_Player.FindAction("EditorTouchPoint", throwIfNotFound: true);
             m_Player_Action = m_Player.FindAction("Action", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
@@ -1059,6 +1101,8 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Gyro;
         private readonly InputAction m_Player_PauseResume;
         private readonly InputAction m_Player_Touch;
+        private readonly InputAction m_Player_EditorTouchButton;
+        private readonly InputAction m_Player_EditorTouchPoint;
         private readonly InputAction m_Player_Action;
         public struct PlayerActions
         {
@@ -1071,6 +1115,8 @@ namespace UnityEngine.InputSystem
             public InputAction @Gyro => m_Wrapper.m_Player_Gyro;
             public InputAction @PauseResume => m_Wrapper.m_Player_PauseResume;
             public InputAction @Touch => m_Wrapper.m_Player_Touch;
+            public InputAction @EditorTouchButton => m_Wrapper.m_Player_EditorTouchButton;
+            public InputAction @EditorTouchPoint => m_Wrapper.m_Player_EditorTouchPoint;
             public InputAction @Action => m_Wrapper.m_Player_Action;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
@@ -1102,6 +1148,12 @@ namespace UnityEngine.InputSystem
                     @Touch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                     @Touch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                     @Touch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
+                    @EditorTouchButton.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchButton;
+                    @EditorTouchButton.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchButton;
+                    @EditorTouchButton.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchButton;
+                    @EditorTouchPoint.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchPoint;
+                    @EditorTouchPoint.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchPoint;
+                    @EditorTouchPoint.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnEditorTouchPoint;
                     @Action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
@@ -1130,6 +1182,12 @@ namespace UnityEngine.InputSystem
                     @Touch.started += instance.OnTouch;
                     @Touch.performed += instance.OnTouch;
                     @Touch.canceled += instance.OnTouch;
+                    @EditorTouchButton.started += instance.OnEditorTouchButton;
+                    @EditorTouchButton.performed += instance.OnEditorTouchButton;
+                    @EditorTouchButton.canceled += instance.OnEditorTouchButton;
+                    @EditorTouchPoint.started += instance.OnEditorTouchPoint;
+                    @EditorTouchPoint.performed += instance.OnEditorTouchPoint;
+                    @EditorTouchPoint.canceled += instance.OnEditorTouchPoint;
                     @Action.started += instance.OnAction;
                     @Action.performed += instance.OnAction;
                     @Action.canceled += instance.OnAction;
@@ -1296,6 +1354,8 @@ namespace UnityEngine.InputSystem
             void OnGyro(InputAction.CallbackContext context);
             void OnPauseResume(InputAction.CallbackContext context);
             void OnTouch(InputAction.CallbackContext context);
+            void OnEditorTouchButton(InputAction.CallbackContext context);
+            void OnEditorTouchPoint(InputAction.CallbackContext context);
             void OnAction(InputAction.CallbackContext context);
         }
         public interface IUIActions

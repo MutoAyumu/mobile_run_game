@@ -69,6 +69,24 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "EditorTouchButton",
+                    "type": "Value",
+                    "id": "3dd73d5b-ed67-4b66-8f9e-feb364e41b7a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "EditorTouchPoint",
+                    "type": "Value",
+                    "id": "aaf5c90e-4ce0-4cae-8a8b-4f7a909944bd",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Action",
                     "type": "Button",
                     "id": "d4b2de25-6d3b-4efc-98ec-056a0f587998",
@@ -351,6 +369,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ccd43cf8-b07b-4f0a-a2b2-f2f2734192d4",
+                    "path": "<Mouse>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EditorTouchButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "15607d5e-2d29-4d95-80f2-6135688972c7",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "EditorTouchPoint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
