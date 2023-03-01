@@ -2000,7 +2000,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1594098524}
   - component: {fileID: 1594098523}
-  - component: {fileID: 1594098522}
   m_Layer: 0
   m_Name: UI Camera
   m_TagString: Untagged
@@ -2008,14 +2007,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &1594098522
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1594098521}
-  m_Enabled: 1
 --- !u!20 &1594098523
 Camera:
   m_ObjectHideFlags: 0

@@ -42,7 +42,6 @@ public class InputSystemManager
         else
         {
             _inputs.Player.EditorTouchButton.started += OnInputEditorTouchButton;
-            _inputs.Player.EditorTouchButton.canceled += OnInputEditorTouchButton;
             _inputs.Player.EditorTouchPoint.performed += OnInputEditorTouchPoint;
         }
 #endif

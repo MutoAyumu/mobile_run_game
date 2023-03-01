@@ -37,6 +37,7 @@ public class AttackAction : MonoBehaviour, IObjectPool
             _disposable.Dispose();
             pointerEnterEvent?.Invoke();
             _moveTween.Kill();
+            Debug.Log(gameObject.name);
             SizeChangeAnim(Vector2.zero, _sizeChangeSpeed, () => Destroy());
         }).AddTo(this);
 

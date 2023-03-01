@@ -8,6 +8,7 @@ public interface IAction
     const int Limit = 15;
 
     public int SuccessCount { get; }
+    public int RequiredTapCount { get; }
 
     public void Init();
     public void Enter();
