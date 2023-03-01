@@ -7,13 +7,19 @@ using UnityEngine.InputSystem.LowLevel;
 
 public class TouchEffectPlayer : MonoBehaviour
 {
-    [SerializeField] Image _touchEffect;
+    [SerializeField] ParticleSystem _tapEffectPrefab;
+    [SerializeField] TrailRenderer _holdEffectPrefab;
+    [SerializeField] Camera _uiCamera;
+    [SerializeField] float _cameraZ = 5f;
 
-    bool _isActive;
+    ParticleSystem _tapEffect;
+    TrailRenderer _holdEffect;
+    Vector2 _tapPoint;
 
     private void Awake()
     {
-        _touchEffect.enabled = false;
+        _tapEffect = Instantiate(_tapEffectPrefab);
+        _holdEffect = Instantiate(_holdEffectPrefab);
 
 #if UNITY_EDITOR
         if (UnityEditor.EditorApplication.isRemoteConnected)
@@ -35,26 +41,31 @@ public class TouchEffectPlayer : MonoBehaviour
     {
         if (state.phase == UnityEngine.InputSystem.TouchPhase.Began)
         {
-            _touchEffect.enabled = true;
-        }
-        else if (state.phase == UnityEngine.InputSystem.TouchPhase.Ended)
-        {
-            _touchEffect.enabled = false;
+            _tapEffectPrefab.Play();
+            MoveEffect(_tapEffect.transform, state.position);
         }
 
         if (state.isInProgress)
         {
-            _touchEffect.transform.position = state.position;
+            MoveEffect(_holdEffect.transform, state.position);
         }
     }
     void IsProgress()
     {
-        _isActive = !_isActive;
-
-        _touchEffect.enabled = _isActive;
+        _tapEffect.Play();
+        MoveEffect(_tapEffect.transform, _tapPoint);
     }
     void IsEffectMove(Vector2 vec)
     {
-        _touchEffect.transform.position = vec;
+        _tapPoint = vec;
+        MoveEffect(_holdEffect.transform, vec);
+    }
+
+    void MoveEffect(Transform t, Vector3 pos)
+    {
+        var vec = pos;
+        vec.z = _cameraZ;
+
+        t.position = _uiCamera.ScreenToWorldPoint(vec);
     }
 }
