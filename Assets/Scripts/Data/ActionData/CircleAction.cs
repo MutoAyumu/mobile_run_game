@@ -14,6 +14,7 @@ public class CircleAction : IAction
     [SerializeField] AttackAction _prefab;
     [SerializeField] float _destroyTime = 2.5f;
     [SerializeField] float _moveTime = 1f;
+    [SerializeField] SkillObject _swordPrefab;
 
     float _radDiff;
     float _rad;
@@ -28,6 +29,7 @@ public class CircleAction : IAction
 
     public int SuccessCount => _successCount;
     public int RequiredTapCount => _requiredTapCount;
+    public SkillObject Skill => _swordPrefab;
 
     const int RAGIAN = 360;
 

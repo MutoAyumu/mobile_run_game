@@ -12,6 +12,7 @@ public class PlayerAction : MonoBehaviour
     [SerializeField] ActionData _actionData;
     [SerializeField] AttackType _attackType = AttackType.First;
     [SerializeField] float _power = 1f;
+    [SerializeField] Transform _center;
 
     Animator _anim;
     PlayerController _owner;
@@ -48,6 +49,9 @@ public class PlayerAction : MonoBehaviour
     {
         var power = _power * ActionSystem.Instance.SuccessCount;
         var targets = FieldManager.Instance.Targets;
+
+        var skill = Instantiate(_actionData.State.Skill, _center.position, Quaternion.identity);
+        skill.SetDamageValue(power);
 
         for (int i = 0; i < targets.Count; i++)
         {

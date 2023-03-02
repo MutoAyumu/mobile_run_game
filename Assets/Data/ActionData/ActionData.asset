@@ -20,6 +20,7 @@ MonoBehaviour:
     - rid: 1232266141723787284
       type: {class: CircleAction, ns: , asm: Assembly-CSharp}
       data:
+        _requiredTapCount: 5
         _generateInterval: 0.2
         _length: 350
         _countGeneratedInOnce: 9
@@ -30,3 +31,4 @@ MonoBehaviour:
         _prefab: {fileID: 818301725750509857, guid: 41d054fa2c6c0a940962cf50db9b52d5, type: 3}
         _destroyTime: 2.5
         _moveTime: 1
+        _swordPrefab: {fileID: 6693592367372848946, guid: d7f6714c26d48484c836ebc596ad0a70, type: 3}

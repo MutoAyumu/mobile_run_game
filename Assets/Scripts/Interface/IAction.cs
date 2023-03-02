@@ -9,6 +9,7 @@ public interface IAction
 
     public int SuccessCount { get; }
     public int RequiredTapCount { get; }
+    public SkillObject Skill { get; }
 
     public void Init();
     public void Enter();
