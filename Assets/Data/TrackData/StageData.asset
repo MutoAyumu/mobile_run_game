@@ -48,8 +48,8 @@ MonoBehaviour:
     - rid: 1232266182998360074
       type: {class: Spike, ns: , asm: Assembly-CSharp}
       data:
-        _spacing: 4
-        _spacingFromPrevData: 20
+        _spacing: 6
+        _spacingFromPrevData: 100
         _mesh: {fileID: 4300000, guid: 1a5dcf5c28e4b4049941bd2c8cb7b878, type: 3}
         _material: {fileID: 2100000, guid: 3e7101ee60b046b418bc7a05d385162b, type: 2}
         _modelRotation: {x: -90, y: 0, z: 0}
@@ -61,6 +61,14 @@ MonoBehaviour:
         - _position: 0
           _beginVerticalPosition: 0
         - _position: 0
+          _beginVerticalPosition: 0
+        - _position: 0
+          _beginVerticalPosition: 0
+        - _position: 1
+          _beginVerticalPosition: 0
+        - _position: 2
+          _beginVerticalPosition: 0
+        - _position: 2
           _beginVerticalPosition: 0
         - _position: 0
           _beginVerticalPosition: 0

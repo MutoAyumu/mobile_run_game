@@ -20,7 +20,7 @@ MonoBehaviour:
     - rid: 1232266141723787284
       type: {class: CircleAction, ns: , asm: Assembly-CSharp}
       data:
-        _requiredTapCount: 5
+        _requiredTapCount: 20
         _generateInterval: 0.2
         _length: 350
         _countGeneratedInOnce: 9

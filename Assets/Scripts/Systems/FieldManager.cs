@@ -37,6 +37,7 @@ public class FieldManager
     public void Init(FieldManagerAttachment attachment)
     {
         _gameTime.Value = attachment.GameTime;
+        _score.Value = 0;
         _scoreMultiplicationValue = attachment.ScoreMultiplicationValue;
 
         Observable.EveryUpdate()
