@@ -2,162 +2,99 @@ Shader "Unlit/DepthDissolve"
 {
     Properties
     {
-        _MainTex("Main Texture", 2D) = "white" {}
-
-        [Header(Dissolution)]
-        _DisBegin("Begin (The lower, the closer of the camera)", Range(0., 1.0)) = 0.
-        _DisEnd("End (Should be lower than Begin value)", Range(0., 1.0)) = 0.
-
-        [Header(Ambient)]
-        _Ambient("Intensity", Range(0., 1.)) = 0.1
-        _AmbColor("Color", color) = (1., 1., 1., 1.)
-
-        [Header(Diffuse)]
-        _Diffuse("Val", Range(0., 1.)) = 1.
-        _DifColor("Color", color) = (1., 1., 1., 1.)
-
-        [Header(Specular)]
-        [Toggle] _Spec("Enabled?", Float) = 0.
-        _Shininess("Shininess", Range(0.1, 10)) = 1.
-        _SpecColor("Specular color", color) = (1., 1., 1., 1.)
-
-        [Header(Emission)]
-        _EmissionTex("Emission texture", 2D) = "gray" {}
-        _EmiVal("Intensity", float) = 0.
-        [HDR]_EmiColor("Color", color) = (1., 1., 1., 1.)
+        [HDR] _BaseColor ("Color", Color) = (1,1,1)
+        [HDR] _EdgeColor ("Dissolve Color", Color) = (0, 0, 0)
+        _MainTex ("Texture", 2D) = "white" {}
+        _DiffuseShade("Diffuse Shade",Range(0,1)) = 0.5
+        _DissolveTex ("Dissolve Texture", 2D) = "white" {}
+        _AlphaClipThreshold ("Alpha Clip Threshold", Range(0,1)) = 0.5
+        _EdgeWidth ("Disolve Margin Width", Range(0,1)) = 0.01
     }
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" "LightMode" = "ForwardBase"}
+        LOD 100
 
-        SubShader
+        Pass
         {
-            Pass
-            {
-                Tags { "RenderType" = "Opaque" "Queue" = "Geometry" "LightMode" = "ForwardBase"}
-
-                //Blend SrcAlpha OneMinusSrcAlpha
-
-                CGPROGRAM
-                #pragma vertex vert
-                #pragma fragment frag
-
-            // Change "shader_feature" with "pragma_compile" if you want set this keyword from c# code
-            #pragma shader_feature __ _SPEC_ON
-
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
             #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+            #include "AutoLight.cginc"
 
-            // Change path if needed
-            #include "ClassicNoise3D.cginc"
-
-            struct v2f {
-                float4 pos : SV_POSITION;
+            struct appdata
+            {
+                float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
-                float3 worldPos : TEXCOORD1;
-                float3 worldNormal : TEXCOORD2;
-                float4 projPos : TEXCOORD3;
+                float3 normal:NORMAL;
             };
 
-            v2f vert(appdata_full v)
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+                half3 worldNormal:TEXCOOR1;
+                SHADOW_COORDS(1)
+            };
+
+            fixed4 _BaseColor;
+            fixed4 _EdgeColor;
+            half _AlphaClipThreshold;
+            half _EdgeWidth;
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+
+            float _DiffuseShade;
+
+            sampler2D _DissolveTex;
+            float4 _DissolveTex_ST;
+
+            v2f vert (appdata v)
             {
                 v2f o;
-                // World position
-                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
-
-                // Clip position
-                o.pos = mul(UNITY_MATRIX_VP, float4(o.worldPos, 1.));
-
-                // Screen position
-                o.projPos = ComputeScreenPos(o.pos);
-
-                // Normal in WorldSpace
-                o.worldNormal = normalize(mul(v.normal, (float3x3)unity_WorldToObject));
-
-                o.uv = v.texcoord;
-
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                TRANSFER_SHADOW(o)
                 return o;
             }
 
-            sampler2D _MainTex;
-
-            fixed4 _LightColor0;
-
-            // Diffuse
-            fixed _Diffuse;
-            fixed4 _DifColor;
-
-            //Specular
-            fixed _Shininess;
-            fixed4 _SpecColor;
-
-            //Ambient
-            fixed _Ambient;
-            fixed4 _AmbColor;
-
-            // Emission
-            sampler2D _EmissionTex;
-            fixed4 _EmiColor;
-            fixed _EmiVal;
-
-            // Dissolution
-            fixed _DisBegin;
-            float _DisEnd;
-
-            // Depth texture
-            sampler2D _CameraDepthTexture;
-
-            fixed4 frag(v2f i) : SV_Target
+            fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 c = tex2D(_MainTex, i.uv);
+                fixed4 edgeCol = fixed4(1, 1, 1, 1);
+                
+                // noise textureからalpha値を取得
+                fixed4 dissolve = tex2D(_DissolveTex, i.uv);
+                float alpha = dissolve.r * 0.2 + dissolve.g * 0.7 + dissolve.b * 0.1;
 
-            // Light direction
-            float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                // dissolveを段階的な色変化によって実現する
+                if (alpha < _AlphaClipThreshold + _EdgeWidth && _AlphaClipThreshold > 0) {
+                    edgeCol = _EdgeColor;
+                }
+                if (alpha < _AlphaClipThreshold) {
+                    discard;
+                }
 
-            // Camera direction
-            float3 viewDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPos.xyz);
+                fixed4 col = tex2D(_MainTex, i.uv) * _BaseColor * edgeCol;
 
-            float3 worldNormal = normalize(i.worldNormal);
+                //1つ目のライトのベクトルを正規化
+                float3 L = normalize(_WorldSpaceLightPos0.xyz);
+                //ワールド座標系の法線を正規化
+                float3 N = normalize(i.worldNormal);
+                //ライトベクトルと法線の内積からピクセルの明るさを計算 ランバートの調整もここで行う
+                fixed4 diffuseColor = max(0, dot(N, L) * _DiffuseShade + (1 - _DiffuseShade));
+                //ライトの色を乗算
+                col = _BaseColor * edgeCol * diffuseColor * _LightColor0;
+                // 影を計算
+                col *= SHADOW_ATTENUATION(i);
 
-            // Compute ambient lighting
-            fixed4 amb = _Ambient * _AmbColor;
-
-            // Compute the diffuse lighting
-            fixed4 NdotL = max(0., dot(worldNormal, lightDir) * _LightColor0);
-            fixed4 dif = NdotL * _Diffuse * _LightColor0 * _DifColor;
-
-            fixed4 light = dif + amb;
-
-            // Compute the specular lighting
-            #if _SPEC_ON
-            float3 refl = normalize(reflect(-lightDir, worldNormal));
-            float RdotV = max(0., dot(refl, viewDir));
-            fixed4 spec = pow(RdotV, _Shininess) * _LightColor0 * ceil(NdotL) * _SpecColor;
-
-            light += spec;
-            #endif
-
-            c.rgb *= light.rgb;
-
-            // Compute emission
-            fixed4 emi = tex2D(_EmissionTex, i.uv).r * _EmiColor * _EmiVal;
-            c.rgb += emi.rgb;
-
-            // Retrieve the depth value
-            float depth = Linear01Depth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)).r);
-
-            // To avoid some artefacts
-            if (depth == 1.)
-                discard;
-
-            // Establish if we display the pixel or discard it
-            float ind = step(depth, _DisBegin) * (1 - (depth - _DisEnd) / (_DisBegin - _DisEnd));
-            if ((cnoise(i.worldPos) + 1.) / 2. <= ind)
-                discard;
-
-            return c;
+                return col;
+            }
+            ENDCG
         }
-
-        ENDCG
     }
-        }
-
-            // !! Needed to use the depth texture !!
-            FallBack "Diffuse"
 }
