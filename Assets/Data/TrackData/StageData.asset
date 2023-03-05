@@ -51,7 +51,7 @@ MonoBehaviour:
         _spacing: 6
         _spacingFromPrevData: 100
         _mesh: {fileID: 4300000, guid: 1a5dcf5c28e4b4049941bd2c8cb7b878, type: 3}
-        _material: {fileID: 2100000, guid: 3e7101ee60b046b418bc7a05d385162b, type: 2}
+        _material: {fileID: 2100000, guid: acc1a02c34c135c408a8a552e3cb63c0, type: 2}
         _modelRotation: {x: -90, y: 0, z: 0}
         _dissolveSpeed: 2
         _moveSpeed: 1

@@ -2,8 +2,8 @@ Shader "Unlit/DepthDissolve"
 {
     Properties
     {
-        [HDR] _BaseColor ("Color", Color) = (1,1,1)
-        [HDR] _EdgeColor ("Dissolve Color", Color) = (0, 0, 0)
+        _BaseColor ("Color", Color) = (1,1,1)
+        _EdgeColor ("Dissolve Color", Color) = (0, 0, 0)
         _MainTex ("Texture", 2D) = "white" {}
         _DiffuseShade("Diffuse Shade",Range(0,1)) = 0.5
         _DissolveTex ("Dissolve Texture", 2D) = "white" {}
@@ -29,6 +29,7 @@ Shader "Unlit/DepthDissolve"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
+                float4 color : COLOR;
                 float3 normal:NORMAL;
             };
 
@@ -36,6 +37,7 @@ Shader "Unlit/DepthDissolve"
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
+                float4 color : TEXCOORD2;
                 half3 worldNormal:TEXCOOR1;
                 SHADOW_COORDS(1)
             };
@@ -50,16 +52,35 @@ Shader "Unlit/DepthDissolve"
 
             float _DiffuseShade;
 
+            float _CurveStrengthY;
+            float _CurveStrengthX;
+
             sampler2D _DissolveTex;
             float4 _DissolveTex_ST;
 
             v2f vert (appdata v)
             {
                 v2f o;
+
+                float _Horizon = 100.0f;
+                float _FadeDist = 50.0f;
+
                 o.vertex = UnityObjectToClipPos(v.vertex);
+
+
+                float dist = UNITY_Z_0_FAR_FROM_CLIPSPACE(o.vertex.z);
+
+                o.vertex.y -= _CurveStrengthY * dist * dist * _ProjectionParams.x;
+                o.vertex.x -= _CurveStrengthX * dist * dist * _ProjectionParams.y;
+
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+
+                o.color = v.color;
+
+                //法線方向のベクトル
                 o.worldNormal = UnityObjectToWorldNormal(v.normal);
                 TRANSFER_SHADOW(o)
+
                 return o;
             }
 
@@ -79,8 +100,6 @@ Shader "Unlit/DepthDissolve"
                     discard;
                 }
 
-                fixed4 col = tex2D(_MainTex, i.uv) * _BaseColor * edgeCol;
-
                 //1つ目のライトのベクトルを正規化
                 float3 L = normalize(_WorldSpaceLightPos0.xyz);
                 //ワールド座標系の法線を正規化
@@ -88,7 +107,7 @@ Shader "Unlit/DepthDissolve"
                 //ライトベクトルと法線の内積からピクセルの明るさを計算 ランバートの調整もここで行う
                 fixed4 diffuseColor = max(0, dot(N, L) * _DiffuseShade + (1 - _DiffuseShade));
                 //ライトの色を乗算
-                col = _BaseColor * edgeCol * diffuseColor * _LightColor0;
+                fixed4 col = tex2D(_MainTex, i.uv) * _BaseColor * edgeCol * diffuseColor * _LightColor0;
                 // 影を計算
                 col *= SHADOW_ATTENUATION(i);
 

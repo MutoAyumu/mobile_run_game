@@ -27,7 +27,7 @@ public abstract class DamageObjectData : IDamageObject
 
     public DamageObjectData() { }
 
-    const string DISSOLVE_PARAM = "_Cutoff";
+    const string DISSOLVE_PARAM = "_AlphaClipThreshold";
 
     protected void SetCreateCountData(int num)
     {
