@@ -1965,7 +1965,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 1614483570}
   m_Lens:
-    FieldOfView: 90
+    FieldOfView: 60
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -1990,7 +1990,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1176837330}
   m_LocalRotation: {x: 0.17364816, y: 0, z: 0, w: 0.9848078}
-  m_LocalPosition: {x: -0.02, y: 3.4178557, z: -1.6741732}
+  m_LocalPosition: {x: -0.02, y: 4.693898, z: -4.402265}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2767,7 +2767,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1503438540}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c87a18b2534753940bc2f89574570aee, type: 3}
   m_Name: 
@@ -2932,13 +2932,13 @@ MonoBehaviour:
   m_LookaheadTime: 0
   m_LookaheadSmoothing: 0
   m_LookaheadIgnoreY: 0
-  m_XDamping: 0.2
-  m_YDamping: 0.2
-  m_ZDamping: 0.2
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_TargetMovementOnly: 1
   m_ScreenX: 0.5
   m_ScreenY: 0.65
-  m_CameraDistance: 2
+  m_CameraDistance: 5
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_DeadZoneDepth: 0
@@ -4116,6 +4116,18 @@ PrefabInstance:
     - target: {fileID: 741638167500219224, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _isDebug
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219225, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _jumpPower
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _moveSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _rotateSpeed
+      value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 824244125139849658, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_LocalPosition.x
