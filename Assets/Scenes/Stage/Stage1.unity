@@ -1348,7 +1348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9d677f1681015749b15c436eec6d880, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MovementRange: 50
+  m_MovementRange: 100
   m_ControlPath: <Gamepad>/leftStick
 --- !u!114 &779206138
 MonoBehaviour:
@@ -2512,7 +2512,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -929, y: -297}
+  m_AnchoredPosition: {x: -808, y: -217}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1429621038
@@ -4119,15 +4119,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219225, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _jumpPower
-      value: 8
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _m
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _moveSpeed
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _rotateSpeed
       value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _forceMultiplier
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 824244125139849658, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_LocalPosition.x

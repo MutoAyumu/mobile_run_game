@@ -5,13 +5,16 @@ public class PlayerMove : MonoBehaviour
 {
     #region ïœêî
     [Header("Parameter")]
-    [SerializeField] float _moveSpeed = 5;
+    [SerializeField] float _groundMoveSpeed = 5;
+    [SerializeField] float _airMoveSpeed = 2;
+    [SerializeField] float _forceMultiplier = 5f;
     [SerializeField] float _rotateSpeed = 500;
     [SerializeField] float _rotateVelocityLimit = 0.5f;
     [SerializeField] float _dampSpeed = 0.1f;
 
     Rigidbody _rb;
     Vector2 _dir;
+    PlayerJump _jump;
     Transform _transform;
     Animator _anim;
     float _currentMoveSpeed;
@@ -30,8 +33,7 @@ public class PlayerMove : MonoBehaviour
         TryGetComponent(out _rb);
         TryGetComponent(out _transform);
         TryGetComponent(out _anim);
-
-        _currentMoveSpeed = _moveSpeed;
+        TryGetComponent(out _jump);
 
         InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(this);
     }
@@ -50,11 +52,14 @@ public class PlayerMove : MonoBehaviour
 
         if (vel != Vector3.zero)
         {
+            _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
             dir = _transform.forward * _currentMoveSpeed;
         }
 
-        dir.y = _rb.velocity.y;
-        _rb.velocity = dir;
+        var move = _forceMultiplier * (dir - _rb.velocity);
+        move.y = _rb.velocity.y;
+
+        _rb.AddForce(move, ForceMode.Acceleration);
 
         _anim.SetFloat(MOVE_ANIM_PARAM, vel.magnitude, _dampSpeed, Time.deltaTime);
     }
