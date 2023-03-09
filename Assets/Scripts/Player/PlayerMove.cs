@@ -90,11 +90,14 @@ public class PlayerMove : MonoBehaviour
         _transform.rotation = Quaternion.RotateTowards(_transform.rotation, rot, speed);
     }
     
-    public void Accelerator(Vector3 vec, float inputInvalidationTime)
+    public void Accelerator(Vector3 vec, Vector3 rot, float inputInvalidationTime)
     {
         _isAccelerator = true;
         _inputInvalidationTimer.Setup(inputInvalidationTime);
+  
         _rb.velocity = Vector3.zero;
         _rb.AddForce(vec, ForceMode.VelocityChange);
+
+        _transform.rotation = Quaternion.LookRotation(rot, Vector3.up);
     }
 }
