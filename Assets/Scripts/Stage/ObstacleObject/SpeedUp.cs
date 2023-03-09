@@ -25,7 +25,9 @@ public class SpeedUp : MonoBehaviour
             if(other.TryGetComponent(out move))
             {
                 var vel = _transform.forward * _addSpeed;
-                var rot = new Vector3(0, _transform.rotation.y, 0);
+                var rot = _transform.rotation;
+                rot.x = 0;
+                rot.z = 0;
                 move.Accelerator(vel, rot, _inputInvalidationTime);
             }
         }

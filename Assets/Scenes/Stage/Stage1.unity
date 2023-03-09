@@ -1996,7 +1996,7 @@ Transform:
   m_Children:
   - {fileID: 1590926339}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 20, y: 0, z: 0}
 --- !u!1 &1211903048
 GameObject:
@@ -3211,7 +3211,7 @@ Transform:
   m_Children:
   - {fileID: 1211903049}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -35, z: 0}
 --- !u!4 &1758024198 stripped
 Transform:
@@ -4123,7 +4123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219225, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _jumpPower
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _m
@@ -4138,6 +4138,10 @@ PrefabInstance:
       value: 550
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
+      propertyPath: _airMoveSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _isAccelerator
       value: 0
       objectReference: {fileID: 0}
@@ -4147,7 +4151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 741638167500219227, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: _groundMoveSpeed
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 824244125139849658, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4179,7 +4183,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 990909045074745343, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 990909045074745343, guid: dd8acf1fffe77384d8f68624a15c5a8f, type: 3}
       propertyPath: m_LocalPosition.x
