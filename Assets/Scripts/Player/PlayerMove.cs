@@ -17,7 +17,10 @@ public class PlayerMove : MonoBehaviour
     PlayerJump _jump;
     Transform _transform;
     Animator _anim;
+    Timer _inputInvalidationTimer = new Timer();
     float _currentMoveSpeed;
+    bool _isAccelerator;
+
     #endregion
 
     #region プロパティ
@@ -45,23 +48,33 @@ public class PlayerMove : MonoBehaviour
 
     public void OnMove()
     {
-        var vel = new Vector3(_dir.x, 0, _dir.y).normalized;
-        var dir = Vector3.zero;
-
-        OnRotate(vel);
-
-        if (vel != Vector3.zero)
+        if (!_isAccelerator)
         {
-            _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
-            dir = _transform.forward * _currentMoveSpeed;
+            var vel = new Vector3(_dir.x, 0, _dir.y).normalized;
+            var dir = Vector3.zero;
+
+            OnRotate(vel);
+
+            if (vel != Vector3.zero)
+            {
+                _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
+                dir = _transform.forward * _currentMoveSpeed;
+            }
+
+            var move = _forceMultiplier * (dir - _rb.velocity);
+            move.y = _rb.velocity.y;
+
+            _rb.AddForce(move, ForceMode.Acceleration);
         }
-
-        var move = _forceMultiplier * (dir - _rb.velocity);
-        move.y = _rb.velocity.y;
-
-        _rb.AddForce(move, ForceMode.Acceleration);
-
-        _anim.SetFloat(MOVE_ANIM_PARAM, vel.magnitude, _dampSpeed, Time.deltaTime);
+        else
+        {
+            if(_inputInvalidationTimer.RunTimer())
+            {
+                _isAccelerator = false;
+            }
+        }
+        
+        _anim.SetFloat(MOVE_ANIM_PARAM, _rb.velocity.magnitude, _dampSpeed, Time.deltaTime);
     }
 
     void OnRotate(Vector3 vel)
@@ -75,5 +88,13 @@ public class PlayerMove : MonoBehaviour
         }
 
         _transform.rotation = Quaternion.RotateTowards(_transform.rotation, rot, speed);
+    }
+    
+    public void Accelerator(Vector3 vec, float inputInvalidationTime)
+    {
+        _isAccelerator = true;
+        _inputInvalidationTimer.Setup(inputInvalidationTime);
+        _rb.velocity = Vector3.zero;
+        _rb.AddForce(vec, ForceMode.VelocityChange);
     }
 }
