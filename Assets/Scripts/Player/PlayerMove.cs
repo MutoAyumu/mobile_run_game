@@ -1,5 +1,6 @@
 using UnityEngine;
 using UniRx;
+using DG.Tweening;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float _forceMultiplier = 5f;
     [SerializeField] float _rotateSpeed = 500;
     [SerializeField] float _rotateVelocityLimit = 0.5f;
+    [SerializeField] float _acceleratorDuration = 1f;
     [SerializeField] float _dampSpeed = 0.1f;
 
     Rigidbody _rb;
@@ -19,6 +21,7 @@ public class PlayerMove : MonoBehaviour
     Animator _anim;
     Timer _inputInvalidationTimer = new Timer();
     float _currentMoveSpeed;
+    float _currentRotateSpeed;
     bool _isAccelerator;
 
     #endregion
@@ -39,6 +42,8 @@ public class PlayerMove : MonoBehaviour
         TryGetComponent(out _jump);
 
         InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(this);
+
+        _currentRotateSpeed = _rotateSpeed;
     }
 
     void OnSetDirection(Vector2 vec)
@@ -48,13 +53,11 @@ public class PlayerMove : MonoBehaviour
 
     public void OnMove()
     {
+        var vel = new Vector3(_dir.x, 0, _dir.y).normalized;
+        var dir = Vector3.zero;
+
         if (!_isAccelerator)
         {
-            var vel = new Vector3(_dir.x, 0, _dir.y).normalized;
-            var dir = Vector3.zero;
-
-            OnRotate(vel);
-
             if (vel != Vector3.zero)
             {
                 _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
@@ -64,13 +67,23 @@ public class PlayerMove : MonoBehaviour
             var move = _forceMultiplier * (dir - new Vector3(_rb.velocity.x, 0, _rb.velocity.z));
 
             _rb.AddForce(move, ForceMode.Acceleration);
+            OnRotate(vel);
         }
         else
         {
             if(_inputInvalidationTimer.RunTimer())
             {
                 _isAccelerator = false;
+                DOVirtual.Float(0, _rotateSpeed, _acceleratorDuration, value => _currentRotateSpeed = value);
             }
+
+            if(vel != Vector3.zero)
+            {
+                _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
+                dir = new Vector3(vel.x, 0, 0) * _currentMoveSpeed;
+            }
+
+            _rb.AddForce(dir, ForceMode.Acceleration);
         }
         
         _anim.SetFloat(MOVE_ANIM_PARAM, _rb.velocity.magnitude, _dampSpeed, Time.deltaTime);
@@ -79,7 +92,7 @@ public class PlayerMove : MonoBehaviour
     void OnRotate(Vector3 vel)
     {
         var rot = _transform.rotation;
-        var speed = _rotateSpeed * Time.deltaTime;
+        var speed = _currentRotateSpeed * Time.deltaTime;
 
         if (vel.magnitude > _rotateVelocityLimit)
         {
