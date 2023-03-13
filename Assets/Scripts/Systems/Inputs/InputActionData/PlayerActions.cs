@@ -118,6 +118,15 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Acceleration"",
+                    ""type"": ""Button"",
+                    ""id"": ""a5735a19-56eb-4a6f-ac8a-20bdb8f5410c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -426,6 +435,17 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8fca5c1d-f194-4600-9877-e60c4efa64f6"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Acceleration"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1023,6 +1043,7 @@ namespace UnityEngine.InputSystem
             m_Player_EditorTouchButton = m_Player.FindAction("EditorTouchButton", throwIfNotFound: true);
             m_Player_EditorTouchPoint = m_Player.FindAction("EditorTouchPoint", throwIfNotFound: true);
             m_Player_Action = m_Player.FindAction("Action", throwIfNotFound: true);
+            m_Player_Acceleration = m_Player.FindAction("Acceleration", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1104,6 +1125,7 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_EditorTouchButton;
         private readonly InputAction m_Player_EditorTouchPoint;
         private readonly InputAction m_Player_Action;
+        private readonly InputAction m_Player_Acceleration;
         public struct PlayerActions
         {
             private @GameInputs m_Wrapper;
@@ -1118,6 +1140,7 @@ namespace UnityEngine.InputSystem
             public InputAction @EditorTouchButton => m_Wrapper.m_Player_EditorTouchButton;
             public InputAction @EditorTouchPoint => m_Wrapper.m_Player_EditorTouchPoint;
             public InputAction @Action => m_Wrapper.m_Player_Action;
+            public InputAction @Acceleration => m_Wrapper.m_Player_Acceleration;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1157,6 +1180,9 @@ namespace UnityEngine.InputSystem
                     @Action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
+                    @Acceleration.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
+                    @Acceleration.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
+                    @Acceleration.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -1191,6 +1217,9 @@ namespace UnityEngine.InputSystem
                     @Action.started += instance.OnAction;
                     @Action.performed += instance.OnAction;
                     @Action.canceled += instance.OnAction;
+                    @Acceleration.started += instance.OnAcceleration;
+                    @Acceleration.performed += instance.OnAcceleration;
+                    @Acceleration.canceled += instance.OnAcceleration;
                 }
             }
         }
@@ -1357,6 +1386,7 @@ namespace UnityEngine.InputSystem
             void OnEditorTouchButton(InputAction.CallbackContext context);
             void OnEditorTouchPoint(InputAction.CallbackContext context);
             void OnAction(InputAction.CallbackContext context);
+            void OnAcceleration(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {
