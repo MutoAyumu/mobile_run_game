@@ -8,7 +8,7 @@ public interface IAction
     const int Limit = 15;
 
     public int SuccessCount { get; }
-    public int RequiredTapCount { get; }
+    public float SkillInterval { get; }
     public SkillObject Skill { get; }
 
     public void Init();

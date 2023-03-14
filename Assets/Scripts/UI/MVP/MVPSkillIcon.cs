@@ -27,6 +27,6 @@ public class MVPSkillIcon : MonoBehaviour
 
         _tween = DOVirtual.Float(from, to, _animSpeed, v => _image.fillAmount = v);
 
-        Debug.Log(to);
+        Debug.Log(to.ToString("0.00"));
     }
 }

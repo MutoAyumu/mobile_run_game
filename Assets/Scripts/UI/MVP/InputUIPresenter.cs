@@ -11,9 +11,9 @@ public class InputUIPresenter : MonoBehaviour
     {
         if(_skillIcon)
         {
-            var value = 1f / ActionSystem.Instance.RequiredTapCount;
+            var value = 1f / ActionSystem.Instance.SkillIntervalData;
 
-            ActionSystem.Instance.TapCount.Subscribe(x => _skillIcon.SetFillAmount(1 - (x * value)));
+            ActionSystem.Instance.SkillInterval.Subscribe(x => _skillIcon.SetFillAmount(1 - (x * value)));
         }
     }
 }

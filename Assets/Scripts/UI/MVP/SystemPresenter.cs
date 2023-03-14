@@ -7,7 +7,8 @@ public class SystemPresenter : MonoBehaviour
 {
     [SerializeField] MVPText _gameTimeText;
     [SerializeField] MVPText _scoreText;
-    [SerializeField] string _format = "0000";
+    [SerializeField] string _timeTextFormat = "00:00";
+    [SerializeField] string _scoreTextFormat = "000000";
 
     private void Awake()
     {
@@ -15,14 +16,14 @@ public class SystemPresenter : MonoBehaviour
         {
             FieldManager.Instance.GameTime.Subscribe(x =>
             {
-                _gameTimeText.SetText($"GameTime : {x.ToString(_format)}");
+                _gameTimeText.SetText($"{x.ToString(_timeTextFormat)}");
             }).AddTo(this);
         }
         if(_scoreText)
         {
             FieldManager.Instance.Score.Subscribe(x =>
             {
-                _scoreText.SetText($"Score : {x.ToString(_format)}");
+                _scoreText.SetText($"{x.ToString(_scoreTextFormat)}");
             }).AddTo(this);
         }
     }

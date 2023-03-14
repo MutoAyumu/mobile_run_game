@@ -5,7 +5,7 @@ using UnityEngine;
 public class CircleAction : IAction
 {
     [Header("Settings")]
-    [SerializeField] int _requiredTapCount = 5;
+    [SerializeField] float _skillInterval = 10f;
     [SerializeField] float _generateInterval = 0.5f;
     [SerializeField] float _length = 200f;
     [SerializeField] int _countGeneratedInOnce = 9;
@@ -28,7 +28,7 @@ public class CircleAction : IAction
     GenericObjectPool<AttackAction> _pool = new GenericObjectPool<AttackAction>();
 
     public int SuccessCount => _successCount;
-    public int RequiredTapCount => _requiredTapCount;
+    public float SkillInterval => _skillInterval;
     public SkillObject Skill => _swordPrefab;
 
     const int RAGIAN = 360;

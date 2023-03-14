@@ -12,7 +12,7 @@ public class ActionSystem
     bool _isCompleted = true;
     Subject<Unit> _actionSub = new Subject<Unit>();
     Subject<Unit> _isCompletedSub = new Subject<Unit>();
-    ReactiveProperty<int> _tapCount = new ReactiveProperty<int>();
+    ReactiveProperty<float> _skillInterval = new ReactiveProperty<float>();
 
     readonly static ActionSystem _instance = new ActionSystem();
     #endregion
@@ -21,9 +21,9 @@ public class ActionSystem
     public static ActionSystem Instance => _instance;
     public IObservable<Unit> IsCompleted => _isCompletedSub;
     public IObservable<Unit> Action => _actionSub;
-    public IReadOnlyReactiveProperty<int> TapCount => _tapCount;
+    public IReadOnlyReactiveProperty<float> SkillInterval => _skillInterval;
     public int SuccessCount => _currentData.State.SuccessCount;
-    public int RequiredTapCount => _currentData.State.RequiredTapCount;
+    public float SkillIntervalData => _currentData.State.SkillInterval;
     #endregion
 
     public ActionSystem() 
@@ -55,7 +55,7 @@ public class ActionSystem
         InputSystemManager.Instance.TouchState.Subscribe(TappedTouchState).AddTo(attachment);
 #endif
 
-        _tapCount.Value = 0;
+        _skillInterval.Value = 0;
         _isCompleted = true;
     }
 
@@ -74,7 +74,14 @@ public class ActionSystem
 
     void Update()
     {
-        if (_isCompleted) return;
+        if (_isCompleted)
+        {
+            if (_currentData.State.SkillInterval > _skillInterval.Value)
+            {
+                _skillInterval.Value += Time.deltaTime;
+            }
+            return;
+        }
 
         var com = _currentData.State.Update();
 
@@ -84,16 +91,13 @@ public class ActionSystem
             _isCompletedSub.OnNext(Unit.Default);
             CameraManager.Instance.ChangePreferredOrder(VCameraType.PlayerFollow);
             CameraManager.Instance.ChangeTimeScale(TimeScaleType.NormalTime);
-
-            Debug.Log($"残りのタップカウント : {_tapCount}");
         }
     }
 
     void AddTapCount(int value)
     {
-        _tapCount.Value += value;
-
-        Debug.Log($"タップカウント : {_tapCount}");
+        //加速のタップはここをそのまま使っていくかも
+        Debug.Log($"タップカウント : ");
     }
     void TappedTouchState(TouchState state)
     {
@@ -107,10 +111,10 @@ public class ActionSystem
     {
         if (!_isCompleted) return;
 
-        if (_tapCount.Value < _currentData.State.RequiredTapCount) return;
+        if (_skillInterval.Value < _currentData.State.SkillInterval) return;
 
         _isCompleted = false;
-        _tapCount.Value = 0;
+        _skillInterval.Value = 0;
         _actionSub.OnNext(Unit.Default);
         _currentData.State.Init();
         CameraManager.Instance.ChangePreferredOrder(VCameraType.Action);
