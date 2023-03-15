@@ -13,6 +13,7 @@ public class InputSystemManager
     ReactiveProperty<Vector2> _editorTouchPoint = new ReactiveProperty<Vector2>();
     Subject<Unit> _editorTouchButton = new Subject<Unit>();
     Subject<Unit> _jumpSub = new Subject<Unit>();
+    Subject<Unit> _dushSub = new Subject<Unit>();
     Subject<Unit> _actionSub = new Subject<Unit>();
     #endregion
 
@@ -23,6 +24,7 @@ public class InputSystemManager
     public IReadOnlyReactiveProperty<Vector2> EditorTouchPoint => _editorTouchPoint;
     public IObservable<Unit> EditorTouchButton => _editorTouchButton;
     public IObservable<Unit> JumpSub => _jumpSub;
+    public IObservable<Unit> DushSub => _dushSub;
     public IObservable<Unit> ActionSub => _actionSub;
     #endregion
 
@@ -30,6 +32,7 @@ public class InputSystemManager
     {
         _inputs = new GameInputs();
         _inputs.Player.Jump.performed += OnInputJump;
+        _inputs.Player.Dush.performed += OnInputDush;
         _inputs.Player.Move.performed += OnInputMove;
         _inputs.Player.Move.canceled += OnInputMove;
         _inputs.Player.Action.performed += OnInputAction;
@@ -61,6 +64,10 @@ public class InputSystemManager
     void OnInputJump(InputAction.CallbackContext context)
     {
         _jumpSub.OnNext(Unit.Default);
+    }
+    void OnInputDush(InputAction.CallbackContext context)
+    {
+        _dushSub.OnNext(Unit.Default);
     }
     void OnInputTouch(InputAction.CallbackContext context)
     {

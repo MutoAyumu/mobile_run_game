@@ -66,6 +66,15 @@ namespace UnityEngine.InputSystem
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Dush"",
+                    ""type"": ""Button"",
+                    ""id"": ""a5735a19-56eb-4a6f-ac8a-20bdb8f5410c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Gyro"",
                     ""type"": ""PassThrough"",
                     ""id"": ""07060c5b-aee8-434c-b2e5-64a9154fef68"",
@@ -114,15 +123,6 @@ namespace UnityEngine.InputSystem
                     ""name"": ""Action"",
                     ""type"": ""Button"",
                     ""id"": ""d4b2de25-6d3b-4efc-98ec-056a0f587998"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Acceleration"",
-                    ""type"": ""Button"",
-                    ""id"": ""a5735a19-56eb-4a6f-ac8a-20bdb8f5410c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -445,7 +445,7 @@ namespace UnityEngine.InputSystem
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Acceleration"",
+                    ""action"": ""Dush"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1037,13 +1037,13 @@ namespace UnityEngine.InputSystem
             m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
             m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+            m_Player_Dush = m_Player.FindAction("Dush", throwIfNotFound: true);
             m_Player_Gyro = m_Player.FindAction("Gyro", throwIfNotFound: true);
             m_Player_PauseResume = m_Player.FindAction("PauseResume", throwIfNotFound: true);
             m_Player_Touch = m_Player.FindAction("Touch", throwIfNotFound: true);
             m_Player_EditorTouchButton = m_Player.FindAction("EditorTouchButton", throwIfNotFound: true);
             m_Player_EditorTouchPoint = m_Player.FindAction("EditorTouchPoint", throwIfNotFound: true);
             m_Player_Action = m_Player.FindAction("Action", throwIfNotFound: true);
-            m_Player_Acceleration = m_Player.FindAction("Acceleration", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1119,13 +1119,13 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Look;
         private readonly InputAction m_Player_Fire;
         private readonly InputAction m_Player_Jump;
+        private readonly InputAction m_Player_Dush;
         private readonly InputAction m_Player_Gyro;
         private readonly InputAction m_Player_PauseResume;
         private readonly InputAction m_Player_Touch;
         private readonly InputAction m_Player_EditorTouchButton;
         private readonly InputAction m_Player_EditorTouchPoint;
         private readonly InputAction m_Player_Action;
-        private readonly InputAction m_Player_Acceleration;
         public struct PlayerActions
         {
             private @GameInputs m_Wrapper;
@@ -1134,13 +1134,13 @@ namespace UnityEngine.InputSystem
             public InputAction @Look => m_Wrapper.m_Player_Look;
             public InputAction @Fire => m_Wrapper.m_Player_Fire;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
+            public InputAction @Dush => m_Wrapper.m_Player_Dush;
             public InputAction @Gyro => m_Wrapper.m_Player_Gyro;
             public InputAction @PauseResume => m_Wrapper.m_Player_PauseResume;
             public InputAction @Touch => m_Wrapper.m_Player_Touch;
             public InputAction @EditorTouchButton => m_Wrapper.m_Player_EditorTouchButton;
             public InputAction @EditorTouchPoint => m_Wrapper.m_Player_EditorTouchPoint;
             public InputAction @Action => m_Wrapper.m_Player_Action;
-            public InputAction @Acceleration => m_Wrapper.m_Player_Acceleration;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1162,6 +1162,9 @@ namespace UnityEngine.InputSystem
                     @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                     @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                     @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                    @Dush.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDush;
+                    @Dush.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDush;
+                    @Dush.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDush;
                     @Gyro.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGyro;
                     @Gyro.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGyro;
                     @Gyro.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnGyro;
@@ -1180,9 +1183,6 @@ namespace UnityEngine.InputSystem
                     @Action.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
                     @Action.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAction;
-                    @Acceleration.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
-                    @Acceleration.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
-                    @Acceleration.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAcceleration;
                 }
                 m_Wrapper.m_PlayerActionsCallbackInterface = instance;
                 if (instance != null)
@@ -1199,6 +1199,9 @@ namespace UnityEngine.InputSystem
                     @Jump.started += instance.OnJump;
                     @Jump.performed += instance.OnJump;
                     @Jump.canceled += instance.OnJump;
+                    @Dush.started += instance.OnDush;
+                    @Dush.performed += instance.OnDush;
+                    @Dush.canceled += instance.OnDush;
                     @Gyro.started += instance.OnGyro;
                     @Gyro.performed += instance.OnGyro;
                     @Gyro.canceled += instance.OnGyro;
@@ -1217,9 +1220,6 @@ namespace UnityEngine.InputSystem
                     @Action.started += instance.OnAction;
                     @Action.performed += instance.OnAction;
                     @Action.canceled += instance.OnAction;
-                    @Acceleration.started += instance.OnAcceleration;
-                    @Acceleration.performed += instance.OnAcceleration;
-                    @Acceleration.canceled += instance.OnAcceleration;
                 }
             }
         }
@@ -1380,13 +1380,13 @@ namespace UnityEngine.InputSystem
             void OnLook(InputAction.CallbackContext context);
             void OnFire(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
+            void OnDush(InputAction.CallbackContext context);
             void OnGyro(InputAction.CallbackContext context);
             void OnPauseResume(InputAction.CallbackContext context);
             void OnTouch(InputAction.CallbackContext context);
             void OnEditorTouchButton(InputAction.CallbackContext context);
             void OnEditorTouchPoint(InputAction.CallbackContext context);
             void OnAction(InputAction.CallbackContext context);
-            void OnAcceleration(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

@@ -42,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Dush",
+                    "type": "Button",
+                    "id": "a5735a19-56eb-4a6f-ac8a-20bdb8f5410c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Gyro",
                     "type": "PassThrough",
                     "id": "07060c5b-aee8-434c-b2e5-64a9154fef68",
@@ -90,15 +99,6 @@
                     "name": "Action",
                     "type": "Button",
                     "id": "d4b2de25-6d3b-4efc-98ec-056a0f587998",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Acceleration",
-                    "type": "Button",
-                    "id": "a5735a19-56eb-4a6f-ac8a-20bdb8f5410c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -421,7 +421,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Acceleration",
+                    "action": "Dush",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
