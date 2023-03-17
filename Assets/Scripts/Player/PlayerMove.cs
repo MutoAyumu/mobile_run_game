@@ -19,6 +19,7 @@ public class PlayerMove : MonoBehaviour
     PlayerJump _jump;
     Transform _transform;
     Animator _anim;
+    Camera _cam;
     Timer _inputInvalidationTimer = new Timer();
     float _currentMoveSpeed;
     float _currentRotateSpeed;
@@ -40,6 +41,7 @@ public class PlayerMove : MonoBehaviour
         TryGetComponent(out _transform);
         TryGetComponent(out _anim);
         TryGetComponent(out _jump);
+        Camera.main.TryGetComponent(out _cam);
 
         InputSystemManager.Instance.MoveVector.Subscribe(OnSetDirection).AddTo(this);
 
@@ -54,6 +56,9 @@ public class PlayerMove : MonoBehaviour
     public void OnMove()
     {
         var vel = new Vector3(_dir.x, 0, _dir.y).normalized;
+        vel = _cam.transform.TransformDirection(vel);
+        vel.y = 0;
+
         var dir = Vector3.zero;
 
         if (!_isAccelerator)
