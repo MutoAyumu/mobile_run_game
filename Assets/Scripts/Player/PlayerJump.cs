@@ -8,6 +8,8 @@ public class PlayerJump : MonoBehaviour
     #region 変数
     [Header("Parameter")]
     [SerializeField] float _jumpPower = 1;
+    [SerializeField] ParticleSystem _particlePrefab;
+
     [Header("IsGroundCheck")]
     [SerializeField] float _groundCheckRadius = 1f;
 
@@ -16,10 +18,12 @@ public class PlayerJump : MonoBehaviour
     Transform _thisTransform;
     LayerMask _groundLayer;
     PlayerController _owner;
+    ParticleSystem _particle;
     #endregion
 
     #region プロパティ
     public bool IsGround => IsGroundCheck();
+    public ParticleSystem Particle => _particle;
     #endregion
 
     #region 定数
@@ -31,6 +35,8 @@ public class PlayerJump : MonoBehaviour
         TryGetComponent(out _rb);
         TryGetComponent(out _thisTransform); 
         _groundLayer = LayerMask.GetMask(GROUND_LAYER_NAME);
+        _particle = Instantiate(_particlePrefab, _thisTransform.position, Quaternion.identity, _thisTransform);
+        _particle.Play();
     }
 
     public void Init(PlayerController owner)
@@ -43,6 +49,8 @@ public class PlayerJump : MonoBehaviour
         if (_owner.StatePattern.CurrentStateID != (int)PlayerController.StateType.Jump) return;
 
         if (!IsGround) return;
+
+        _particle.Stop();
 
         var vel = _rb.velocity;
         vel.y = 0;

@@ -67,6 +67,14 @@ public class PlayerMove : MonoBehaviour
             {
                 _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
                 dir = _transform.forward * _currentMoveSpeed;
+
+                if (_jump.Particle.isStopped && _jump.IsGround)
+                    _jump.Particle.Play();
+            }
+            else 
+            {
+                if (_jump.Particle.isPlaying)
+                    _jump.Particle.Stop();
             }
 
             var move = _forceMultiplier * (dir - new Vector3(_rb.velocity.x, 0, _rb.velocity.z));
@@ -86,6 +94,14 @@ public class PlayerMove : MonoBehaviour
             {
                 _currentMoveSpeed = _jump.IsGround ? _groundMoveSpeed : _airMoveSpeed;
                 dir = new Vector3(vel.x, 0, 0) * _currentMoveSpeed;
+
+                if (_jump.Particle.isStopped && _jump.IsGround)
+                    _jump.Particle.Play();
+            }
+            else
+            {
+                if (_jump.Particle.isPlaying)
+                    _jump.Particle.Stop();
             }
 
             _rb.AddForce(dir, ForceMode.Acceleration);
